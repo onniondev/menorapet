@@ -44,7 +44,21 @@ export default function RegisterPage() {
 
         {!isSupabaseConfigured ? (
           <div className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:text-amber-100">
-            Configure o Supabase no arquivo <code className="rounded bg-black/5 px-1">.env.local</code>.
+            <p className="font-semibold">Supabase não configurado neste ambiente</p>
+            <p className="mt-2 text-xs leading-relaxed opacity-95">
+              {import.meta.env.DEV ? (
+                <>
+                  Use <code className="rounded bg-black/5 px-1 dark:bg-white/10">.env.local</code> na raiz com{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_URL</code> e{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_ANON_KEY</code> e reinicie{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">npm run dev</code>.
+                </>
+              ) : (
+                <>
+                  Defina as variáveis <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_*</code> no painel da hospedagem e refaça o deploy.
+                </>
+              )}
+            </p>
           </div>
         ) : null}
 

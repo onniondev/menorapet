@@ -51,9 +51,25 @@ export default function LoginPage() {
 
         {!isSupabaseConfigured ? (
           <div className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:text-amber-100">
-            Defina <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_URL</code> e{' '}
-            <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_ANON_KEY</code> no arquivo{' '}
-            <code className="rounded bg-black/5 px-1 dark:bg-white/10">.env.local</code>.
+            <p className="font-semibold">Supabase não configurado neste ambiente</p>
+            <p className="mt-2 text-xs leading-relaxed opacity-95">
+              {import.meta.env.DEV ? (
+                <>
+                  Na <strong>raiz do repositório</strong>, crie ou edite{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">.env.local</code> com{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_URL</code> e{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_ANON_KEY</code>, depois{' '}
+                  <strong>pare e rode de novo</strong> <code className="rounded bg-black/5 px-1 dark:bg-white/10">npm run dev</code>{' '}
+                  (o Vite só lê o .env ao subir o servidor).
+                </>
+              ) : (
+                <>
+                  Em produção, defina <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_URL</code> e{' '}
+                  <code className="rounded bg-black/5 px-1 dark:bg-white/10">VITE_SUPABASE_ANON_KEY</code> no painel da hospedagem e faça um{' '}
+                  <strong>novo build/deploy</strong> (valores não vêm do seu .env local).
+                </>
+              )}
+            </p>
           </div>
         ) : null}
 
