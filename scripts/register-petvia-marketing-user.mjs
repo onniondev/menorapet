@@ -1,5 +1,5 @@
 /**
- * Registra usuário de teste no Supabase Auth e (opcional) promove a petvia_admins.
+ * Registra usuário de teste no Supabase Auth, confirma e-mail (opcional) e promove a petvia_admins (opcional).
  *
  * Uso (PowerShell):
  *   $env:REG_EMAIL = "adminmkt@site.com"
@@ -7,7 +7,10 @@
  *   node scripts/register-petvia-marketing-user.mjs
  *
  * Requer em .env.local: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
- * Opcional em .env.local ou env: DATABASE_URL — para INSERT em petvia_admins
+ * Opcional: SUPABASE_SERVICE_ROLE_KEY — confirma e-mail via Admin API (Settings → API → service_role)
+ * Opcional: DATABASE_URL — INSERT em petvia_admins via Postgres
+ *
+ * Sem service_role nem DATABASE_URL: use supabase/seeds/confirm_email_and_petvia_admin_adminmkt.sql no SQL Editor.
  */
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -53,51 +56,79 @@ if (!email || !password) {
   process.exit(1)
 }
 
+const emailTrim = email.trim()
+
 const sb = createClient(url, anon, { auth: { persistSession: false, autoRefreshToken: false } })
 
 const { data, error } = await sb.auth.signUp({
-  email: email.trim(),
+  email: emailTrim,
   password,
   options: { data: { full_name: 'Admin Marketing' } },
 })
 
+let userId = !error && data?.user?.id ? data.user.id : null
+
 if (error) {
   if (error.message.toLowerCase().includes('already') || error.code === 'user_already_exists') {
-    console.log('Usuário já existe no Auth. Tentando apenas promover a petvia_admins (se DATABASE_URL estiver definido)…')
+    console.log('Usuário já existe no Auth.')
   } else {
     console.error('signUp:', error.message)
     process.exit(1)
   }
 } else {
   console.log('Cadastro Auth:', data.user ? `ok (user id ${data.user.id})` : 'ok')
-  if (data.session) console.log('Sessão retornada (confirmação de e-mail pode estar desligada).')
-  else console.log('Sem sessão imediata — verifique confirmação de e-mail no Supabase Auth settings.')
+  if (data.session) console.log('Sessão retornada.')
+  else console.log('Sem sessão imediata — tentando confirmar e-mail com service_role se configurado…')
+}
+
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+if (serviceKey) {
+  const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  let uid = userId
+  if (!uid) {
+    const { data: lu, error: le } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+    if (le) {
+      console.error('listUsers:', le.message)
+    } else {
+      const found = lu.users.find((u) => u.email?.toLowerCase() === emailTrim.toLowerCase())
+      uid = found?.id ?? null
+    }
+  }
+  if (uid) {
+    const { error: ue } = await admin.auth.admin.updateUserById(uid, { email_confirm: true })
+    if (ue) console.error('confirm email (admin):', ue.message)
+    else console.log('E-mail confirmado via Admin API.')
+  } else {
+    console.error('Não achei user id para confirmar e-mail.')
+  }
+} else {
+  console.log(
+    'Sem SUPABASE_SERVICE_ROLE_KEY em .env.local — confirme o e-mail no Dashboard Auth ou rode supabase/seeds/confirm_email_and_petvia_admin_adminmkt.sql',
+  )
 }
 
 const dbUrl = process.env.DATABASE_URL
-if (!dbUrl) {
-  console.log('\nSem DATABASE_URL: rode no SQL Editor o arquivo supabase/seeds/petvia_admin_adminmkt.sql (ou defina DATABASE_URL e execute este script de novo).')
-  process.exit(0)
-}
-
-const sql = `
+if (dbUrl) {
+  const sql = `
 insert into public.petvia_admins (user_id, role)
 select id, 'admin'
 from auth.users
 where lower(trim(email)) = lower(trim($1))
 on conflict (user_id) do update set role = excluded.role;
 `
-
-const client = new pg.Client({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } })
-try {
-  await client.connect()
-  const r = await client.query(sql, [email.trim()])
-  console.log('petvia_admins:', r.rowCount != null ? `linhas afetadas: ${r.rowCount}` : 'ok')
-} catch (e) {
-  console.error('Postgres:', e.message)
-  process.exit(1)
-} finally {
-  await client.end().catch(() => {})
+  const client = new pg.Client({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } })
+  try {
+    await client.connect()
+    const r = await client.query(sql, [emailTrim])
+    console.log('petvia_admins:', r.rowCount != null ? `linhas afetadas: ${r.rowCount}` : 'ok')
+  } catch (e) {
+    console.error('Postgres:', e.message)
+    process.exit(1)
+  } finally {
+    await client.end().catch(() => {})
+  }
+} else {
+  console.log('Sem DATABASE_URL — use o SQL em supabase/seeds/confirm_email_and_petvia_admin_adminmkt.sql para petvia_admins + confirmação.')
 }
 
 console.log('Pronto. Faça login em /login com o e-mail e senha informados.')
