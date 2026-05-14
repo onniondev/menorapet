@@ -11,6 +11,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import OnboardingPage from './pages/onboarding/OnboardingPage'
 import Agenda from './pages/Agenda'
 import Automacoes from './pages/Automacoes'
+import BuscaGlobalPage from './pages/BuscaGlobalPage'
 import CentralIA from './pages/CentralIA'
 import ClientesPage from './pages/ClientesPage'
 import Configuracoes from './pages/Configuracoes'
@@ -47,6 +48,7 @@ export default function App() {
             <Route element={<RequireClinic />}>
               <Route path="/app" element={<AppShell />}>
                 <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="busca" element={<BuscaGlobalPage />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="conversas" element={<Conversas />} />
                 <Route path="central-ia" element={<CentralIA />} />

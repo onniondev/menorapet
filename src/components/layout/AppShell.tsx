@@ -1,6 +1,6 @@
 import { Bell, Menu, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useCurrentClinic } from '../../hooks/useCurrentClinic'
 import { MobileBottomNav } from './MobileBottomNav'
 import { Sidebar } from './Sidebar'
@@ -21,12 +21,24 @@ const titles: Record<string, string> = {
   '/app/automacoes': 'Automações',
   '/app/equipe': 'Equipe',
   '/app/configuracoes': 'Configurações',
+  '/app/busca': 'Busca',
 }
 
 export function AppShell() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [open, setOpen] = useState(false)
   const { clinic } = useCurrentClinic()
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    const el = searchInputRef.current
+    if (!el) return
+    if (pathname === '/app/busca') {
+      el.value = searchParams.get('q') ?? ''
+    }
+  }, [pathname, searchParams])
 
   const title = useMemo(() => {
     if (pathname.startsWith('/app/pets/') && pathname !== '/app/pets') return 'Perfil do pet'
@@ -70,9 +82,26 @@ export function AppShell() {
                 </div>
               </div>
 
-              <div className="hidden w-[min(44vw,360px)] md:block">
-                <Input placeholder="Buscar cliente, pet, atendimento…" className="min-h-10 py-2" left={<Search className="h-4 w-4" />} />
-              </div>
+              <form
+                className="hidden w-[min(44vw,360px)] md:block"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const q = (searchInputRef.current?.value ?? '').trim()
+                  if (q.length < 2) return
+                  navigate(`/app/busca?q=${encodeURIComponent(q)}`)
+                }}
+              >
+                <Input
+                  ref={searchInputRef}
+                  name="global-search"
+                  placeholder="Buscar cliente, pet, atendimento…"
+                  className="min-h-10 py-2"
+                  left={<Search className="h-4 w-4" />}
+                  defaultValue=""
+                  aria-label="Busca global"
+                  autoComplete="off"
+                />
+              </form>
 
               <IconButton label="Notificações" className="hidden sm:inline-flex">
                 <Bell className="h-5 w-5" />

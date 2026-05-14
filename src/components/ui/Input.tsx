@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string
@@ -7,7 +7,10 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   right?: ReactNode
 }
 
-export function Input({ label, hint, left, right, className = '', id, ...rest }: Props) {
+export const Input = forwardRef<HTMLInputElement, Props>(function Input(
+  { label, hint, left, right, className = '', id, ...rest },
+  ref,
+) {
   const inputId = id ?? rest.name
 
   return (
@@ -20,6 +23,7 @@ export function Input({ label, hint, left, right, className = '', id, ...rest }:
       >
         {left ? <span className="text-slate-400 dark:text-slate-500">{left}</span> : null}
         <input
+          ref={ref}
           id={inputId}
           className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
           {...rest}
@@ -29,4 +33,4 @@ export function Input({ label, hint, left, right, className = '', id, ...rest }:
       {hint ? <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">{hint}</span> : null}
     </label>
   )
-}
+})

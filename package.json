@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "db:migrate": "node scripts/run-sql-file.mjs supabase/migrations/20260214120000_petvia_foundation.sql",
-    "db:check": "node scripts/check-supabase-schema.mjs"
+    "db:check": "node scripts/check-supabase-schema.mjs",
+    "db:seed-sample": "node scripts/run-sql-file.mjs supabase/seeds/petvia_dashboard_sample.sql"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
