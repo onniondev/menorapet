@@ -10,6 +10,8 @@ export function useMyClinics() {
   return useQuery({
     queryKey: ['my-clinics', uid],
     enabled: Boolean(uid && supabase),
+    staleTime: 60_000,
+    retry: 1,
     queryFn: async (): Promise<Clinic[]> => {
       const sb = supabase!
       const { data: members, error: e1 } = await sb

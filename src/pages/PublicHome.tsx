@@ -16,12 +16,13 @@ function BootScreen() {
 /** Rota `/`: landing para visitantes; logado vai ao app ou onboarding. */
 export default function PublicHome() {
   const { initialized, session } = useAuth()
-  const { data: clinics, isLoading } = useMyClinics()
+  const { data: clinics, isError, isFetched, isEnabled } = useMyClinics()
 
   if (!initialized) return <BootScreen />
 
   if (session) {
-    if (isLoading) return <BootScreen />
+    const waitingClinics = isEnabled && !isFetched && !isError
+    if (waitingClinics) return <BootScreen />
     if (clinics && clinics.length > 0) return <Navigate to="/app/dashboard" replace />
     return <Navigate to="/onboarding" replace />
   }

@@ -4,7 +4,7 @@ import { useMyClinics } from '../../hooks/useMyClinics'
 
 export function RequireClinic() {
   const hasSupabase = Boolean(supabase)
-  const { data: clinics, isLoading, isError } = useMyClinics()
+  const { data: clinics, isFetched, isError, isEnabled } = useMyClinics()
 
   if (!hasSupabase) {
     return (
@@ -15,7 +15,8 @@ export function RequireClinic() {
     )
   }
 
-  if (isLoading) {
+  const waitingClinics = isEnabled && !isFetched && !isError
+  if (waitingClinics) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-surface petvia-mesh dark:bg-slate-950">
         <div className="rounded-3xl border border-white/60 bg-white/70 px-6 py-4 text-sm font-semibold text-slate-600 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/60 dark:text-slate-300">

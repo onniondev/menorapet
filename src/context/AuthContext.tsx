@@ -48,11 +48,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (mounted) setInitialized(true)
         return
       }
-      const { data } = await supabase.auth.getSession()
-      if (!mounted) return
-      setSession(data.session ?? null)
-      if (data.session?.user) await fetchProfile(data.session.user.id)
-      setInitialized(true)
+      try {
+        const { data } = await supabase.auth.getSession()
+        if (!mounted) return
+        setSession(data.session ?? null)
+        // Libera a UI já com a sessão; o perfil não pode bloquear o primeiro paint.
+        setInitialized(true)
+        if (data.session?.user) {
+          void fetchProfile(data.session.user.id).catch(() => {
+            if (mounted) setProfile(null)
+          })
+        }
+      } catch {
+        if (mounted) {
+          setSession(null)
+          setInitialized(true)
+        }
+      }
     }
 
     void init()
@@ -65,8 +77,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, sess) => {
       setSession(sess)
-      if (sess?.user) await fetchProfile(sess.user.id)
-      else {
+      if (sess?.user) {
+        void fetchProfile(sess.user.id).catch(() => setProfile(null))
+      } else {
         setProfile(null)
         useClinicStore.getState().reset()
         queryClient.removeQueries({ queryKey: ['my-clinics'] })
