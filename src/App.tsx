@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { GuestGate } from './components/auth/GuestGate'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireClinic } from './components/auth/RequireClinic'
+import { RequirePetviaAdmin } from './components/auth/RequirePetviaAdmin'
 import { AppShell } from './components/layout/AppShell'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
@@ -25,6 +26,7 @@ import PublicHome from './pages/PublicHome'
 import EstoquePage from './pages/EstoquePage'
 import LembretesPage from './pages/LembretesPage'
 import RelatoriosPage from './pages/RelatoriosPage'
+import MarketingIAPage from './pages/marketing/MarketingIAPage'
 
 function RedirectPacienteToPet() {
   const { id } = useParams()
@@ -47,6 +49,9 @@ export default function App() {
 
           <Route element={<RequireAuth />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route element={<RequirePetviaAdmin />}>
+              <Route path="/marketing-ia" element={<MarketingIAPage />} />
+            </Route>
             <Route element={<RequireClinic />}>
               <Route path="/app" element={<AppShell />}>
                 <Route index element={<Navigate to="dashboard" replace />} />

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Building2, Shield } from 'lucide-react'
+import { Building2, Megaphone, Shield } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '../context/AuthContext'
@@ -7,6 +8,7 @@ import { Card } from '../components/ui/Card'
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { useClinicContext } from '../hooks/useClinicContext'
+import { usePetviaAdmin } from '../hooks/usePetviaAdmin'
 import { isSupabaseConfigured } from '../lib/supabase'
 import type { Clinic } from '../types/app'
 import * as clinicService from '../services/clinicService'
@@ -84,13 +86,33 @@ function ClinicSettingsForm({ clinic }: { clinic: Clinic }) {
 }
 
 export default function Configuracoes() {
+  const navigate = useNavigate()
   const { clinic, clinicId } = useClinicContext()
+  const petviaAdmin = usePetviaAdmin()
 
   if (!isSupabaseConfigured) return <Card padding="lg">Configure o Supabase.</Card>
   if (!clinicId || !clinic) return null
 
   return (
     <div className="space-y-4">
+      {petviaAdmin.data ? (
+        <Card padding="md" className="border-brand-purple/20 bg-gradient-to-r from-brand-purple/8 to-brand-teal/8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 text-brand-purple shadow-sm dark:bg-slate-950/50 dark:text-brand-teal">
+                <Megaphone className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-sm font-extrabold tracking-tight">Marketing IA (PetVia)</div>
+                <p className="text-xs text-slate-600 dark:text-slate-400">Posts institucionais no Instagram — acesso exclusivo da equipe interna.</p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" type="button" onClick={() => void navigate('/marketing-ia')}>
+              Abrir Marketing IA
+            </Button>
+          </div>
+        </Card>
+      ) : null}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-extrabold tracking-tight">Configurações</h2>

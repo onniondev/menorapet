@@ -1,0 +1,18 @@
+# Configuração local Supabase CLI (https://supabase.com/docs/guides/cli/config)
+# Ajuste project_id ao vincular o repo ao projeto remoto.
+
+[api]
+enabled = true
+
+[functions.generate-marketing-post]
+verify_jwt = true
+
+[functions.publish-instagram-post]
+verify_jwt = true
+
+[functions.collect-instagram-metrics]
+verify_jwt = true
+
+# Chamada via pg_cron com service_role no header Authorization
+[functions.scheduled-post-publisher]
+verify_jwt = false
