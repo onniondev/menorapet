@@ -8,7 +8,9 @@ import {
   PawPrint,
   Settings2,
   Sparkles,
+  UserCircle2,
   Users,
+  UsersRound,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
@@ -20,14 +22,16 @@ const items = [
   { to: '/app/conversas', label: 'Conversas', icon: MessageCircle },
   { to: '/app/central-ia', label: 'Central IA', icon: Orbit },
   { to: '/app/agenda', label: 'Agenda', icon: CalendarDays },
-  { to: '/app/pacientes', label: 'Pacientes', icon: PawPrint },
+  { to: '/app/clientes', label: 'Clientes', icon: Users },
+  { to: '/app/pets', label: 'Pets', icon: PawPrint },
   { to: '/app/automacoes', label: 'Automações', icon: Sparkles },
   { to: '/app/financeiro', label: 'Financeiro', icon: CreditCard },
+  { to: '/app/equipe', label: 'Equipe', icon: UsersRound },
   { to: '/app/configuracoes', label: 'Configurações', icon: Settings2 },
 ] as const
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
-  const { user, logout } = useAuth()
+  const { profile, signOut } = useAuth()
 
   return (
     <aside className="flex h-[calc(100dvh-3rem)] w-[min(18rem,92vw)] shrink-0 flex-col overflow-hidden rounded-3xl border border-white/60 bg-white/55 p-4 shadow-[0_18px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl ring-1 ring-white/70 dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_18px_70px_rgba(0,0,0,0.55)] dark:ring-white/5">
@@ -66,11 +70,11 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mt-3 space-y-3 rounded-2xl border border-slate-200/70 bg-white/55 p-3 shadow-inner shadow-slate-900/[0.03] dark:border-white/10 dark:bg-slate-950/35">
         <div className="flex items-start gap-2">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-purple to-brand-blue text-white shadow-lg shadow-brand-purple/20">
-            <Users className="h-4 w-4" />
+            <UserCircle2 className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <div className="truncate text-sm font-bold text-ink dark:text-white">{user?.name}</div>
-            <div className="truncate text-xs text-slate-500 dark:text-slate-400">{user?.clinic}</div>
+            <div className="truncate text-sm font-bold text-ink dark:text-white">{profile?.full_name ?? 'Usuário'}</div>
+            <div className="truncate text-xs text-slate-500 dark:text-slate-400">{profile?.email ?? ''}</div>
           </div>
         </div>
         <Button
@@ -81,7 +85,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           align="center"
           leftIcon={<LogOut className="h-4 w-4" />}
           onClick={() => {
-            logout()
+            void signOut()
             onNavigate?.()
           }}
         >

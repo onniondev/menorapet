@@ -44,7 +44,7 @@ export default function Pacientes() {
               </div>
             </div>
             <Link
-              to={`/app/pacientes/${p.id}`}
+              to={`/app/pets/${p.id}`}
               className="relative mt-4 inline-flex items-center gap-2 text-sm font-extrabold text-brand-purple hover:underline dark:text-brand-teal"
             >
               Ver detalhes

@@ -20,7 +20,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/context/**/*.{ts,tsx}'],
+    files: ['src/context/**/*.{ts,tsx}', 'src/hooks/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },

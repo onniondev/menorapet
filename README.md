@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Petvia IA (menorapet)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend em **React + TypeScript + Vite**, com **Supabase** (Auth + Postgres + RLS).
 
-Currently, two official plugins are available:
+## Variáveis de ambiente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Copie `.env.example` para `.env.local` e preencha:
 
-## React Compiler
+- `VITE_SUPABASE_URL` — URL do projeto (`https://<ref>.supabase.co`)
+- `VITE_SUPABASE_ANON_KEY` — chave pública (anon ou publishable do dashboard)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Banco de dados (migração)
 
-## Expanding the ESLint configuration
+O schema inicial está em `supabase/migrations/20260214120000_petvia_foundation.sql` (tabelas `profiles`, `clinics`, `clinic_members`, `invitations`, `audit_logs`, triggers, RLS e RPC `create_clinic_onboarding`).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Opção A — SQL Editor (recomendado se o PC não tiver IPv6 para o host `db.*`)**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Supabase Dashboard → **SQL** → **New query**
+2. Cole o conteúdo completo do arquivo de migração acima → **Run**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**Opção B — linha de comando (Postgres acessível na rede)**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Use a connection string **Session pooler** (IPv4) ou **direct** (IPv6), copiadas em **Project Settings → Database → Connect**.
+
+PowerShell:
+
+```powershell
+$env:DATABASE_URL = "postgresql://..."  # senha com caracteres especiais: use URL encoding
+npm run db:migrate
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Depois de aplicar o SQL:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run db:check
 ```
+
+Deve listar `profiles`, `clinics`, etc. com ✓.
+
+## Scripts
+
+| Comando        | Descrição                          |
+| -------------- | ---------------------------------- |
+| `npm run dev`  | Servidor de desenvolvimento        |
+| `npm run build`| Build de produção                  |
+| `npm run lint` | ESLint                             |
+| `npm run db:migrate` | Aplica a migração SQL (`DATABASE_URL`) |
+| `npm run db:check`   | Confere tabelas via API REST   |
+
+## Fluxo no app
+
+1. Cadastro / login (`/register`, `/login`)
+2. Sem clínica ativa → `/onboarding`
+3. Com clínica → `/app/dashboard`
+
+---
+
+Template original: [Vite + React + TS](https://vite.dev/).

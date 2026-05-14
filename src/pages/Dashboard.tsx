@@ -42,9 +42,11 @@ const list = { show: { transition: { staggerChildren: 0.06 } } }
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }
 
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { profile } = useAuth()
   const navigate = useNavigate()
   const max = Math.max(...attendanceSeries, 1)
+
+  const displayName = profile?.full_name?.trim() || profile?.email?.split('@')[0] || 'Veterinário(a)'
 
   return (
     <motion.div className="space-y-6" initial="hidden" animate="show" variants={list}>
@@ -61,7 +63,7 @@ export default function Dashboard() {
                 <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">atualizado agora</span>
               </div>
               <h1 className="mt-2 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
-                {greetingWord()}, {user?.name ?? 'Dra. Ana'} <span className="inline-block animate-float-soft">👋</span>
+                {greetingWord()}, {displayName} <span className="inline-block animate-float-soft">👋</span>
               </h1>
               <p className="mt-2 max-w-xl text-pretty text-sm font-medium text-slate-600 dark:text-slate-300">
                 Sua clínica está sob controle. A IA está cuidando da triagem, lembretes e micro‑decisões enquanto você foca no que importa.

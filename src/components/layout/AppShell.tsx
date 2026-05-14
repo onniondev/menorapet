@@ -1,6 +1,7 @@
 import { Bell, Menu, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useCurrentClinic } from '../../hooks/useCurrentClinic'
 import { MobileBottomNav } from './MobileBottomNav'
 import { Sidebar } from './Sidebar'
 import { IconButton } from '../ui/IconButton'
@@ -11,18 +12,21 @@ const titles: Record<string, string> = {
   '/app/conversas': 'Central de conversas',
   '/app/central-ia': 'Central IA',
   '/app/agenda': 'Agenda inteligente',
-  '/app/pacientes': 'Pacientes',
+  '/app/clientes': 'Clientes',
+  '/app/pets': 'Pets',
   '/app/automacoes': 'Automações',
   '/app/financeiro': 'Financeiro',
+  '/app/equipe': 'Equipe',
   '/app/configuracoes': 'Configurações',
 }
 
 export function AppShell() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
+  const { clinic } = useCurrentClinic()
 
   const title = useMemo(() => {
-    if (pathname.startsWith('/app/pacientes/') && pathname !== '/app/pacientes') return 'Perfil do pet'
+    if (pathname.startsWith('/app/pets/') && pathname !== '/app/pets') return 'Perfil do pet'
     return titles[pathname] ?? 'Petvia IA'
   }, [pathname])
 
@@ -58,7 +62,9 @@ export function AppShell() {
 
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-extrabold tracking-tight">{title}</div>
-                <div className="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">Petvia IA · experiência interna</div>
+                <div className="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                  {clinic?.name ?? 'Clínica'} · Petvia IA
+                </div>
               </div>
 
               <div className="hidden w-[min(44vw,320px)] md:block">

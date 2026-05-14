@@ -6,7 +6,7 @@ const items = [
   { to: '/app/conversas', label: 'Chat', icon: MessageCircle },
   { to: '/app/central-ia', label: 'IA', icon: Sparkles, fab: true as const },
   { to: '/app/agenda', label: 'Agenda', icon: CalendarDays },
-  { to: '/app/pacientes', label: 'Pets', icon: PawPrint },
+  { to: '/app/pets', label: 'Pets', icon: PawPrint },
 ] as const
 
 export function MobileBottomNav() {
@@ -20,7 +20,9 @@ export function MobileBottomNav() {
           const fab = 'fab' in entry && entry.fab
 
           const active =
-            to === '/app/pacientes' ? pathname.startsWith('/app/pacientes') : pathname === to || pathname.startsWith(`${to}/`)
+            to === '/app/pets'
+              ? pathname === to || pathname.startsWith('/app/pets/')
+              : pathname === to || pathname.startsWith(`${to}/`)
 
           if (fab) {
             return (
