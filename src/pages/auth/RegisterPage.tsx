@@ -103,6 +103,10 @@ export default function RegisterPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
+            <Link to="/" className="font-medium text-slate-500 hover:text-brand-purple hover:underline dark:text-slate-500 dark:hover:text-brand-teal">
+              ← Voltar ao início
+            </Link>
+            {' · '}
             Já tem conta?{' '}
             <Link to="/login" className="font-bold text-brand-purple hover:underline dark:text-brand-teal">
               Entrar

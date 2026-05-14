@@ -120,6 +120,10 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
+            <Link to="/" className="font-medium text-slate-500 hover:text-brand-purple hover:underline dark:text-slate-500 dark:hover:text-brand-teal">
+              ← Voltar ao início
+            </Link>
+            {' · '}
             Não tem conta?{' '}
             <Link to="/register" className="font-bold text-brand-purple hover:underline dark:text-brand-teal">
               Criar conta

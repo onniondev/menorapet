@@ -20,6 +20,7 @@ import EquipePage from './pages/EquipePage'
 import Financeiro from './pages/Financeiro'
 import PacienteDetalhe from './pages/PacienteDetalhe'
 import Pacientes from './pages/Pacientes'
+import PublicHome from './pages/PublicHome'
 
 function RedirectPacienteToPet() {
   const { id } = useParams()
@@ -31,7 +32,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<PublicHome />} />
 
           <Route element={<GuestGate />}>
             <Route path="/login" element={<LoginPage />} />
@@ -61,7 +62,7 @@ export default function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </ThemeProvider>
