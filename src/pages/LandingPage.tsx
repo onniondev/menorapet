@@ -1,295 +1,288 @@
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
+  Bell,
   Calendar,
-  Check,
-  LineChart,
+  DollarSign,
   MessageCircle,
   PawPrint,
-  Shield,
+  Play,
   Sparkles,
-  Users,
+  Star,
+  UserPlus,
   Zap,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { PetviaLogo } from '../components/PetviaLogo'
-import { ThemeToggle } from '../components/layout/ThemeToggle'
+import { gradientButtonClass } from '../components/petvia/gradientButtonStyles'
+import { DashboardMockup } from '../components/petvia/DashboardMockup'
+import { FeatureCard } from '../components/petvia/FeatureCard'
+import { FloatingCard } from '../components/petvia/FloatingCard'
+import { FooterPetVia } from '../components/petvia/FooterPetVia'
+import { Navbar } from '../components/petvia/Navbar'
 import { cn } from '../lib/utils'
 
 const motionEase = [0.22, 1, 0.36, 1] as const
 
-const fadeUp = {
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-40px' },
-  transition: { duration: 0.45, ease: motionEase },
-}
+const stats = [
+  { label: 'mensagens respondidas pela IA', value: '+230 mil' },
+  { label: 'consultas agendadas automaticamente', value: '+98 mil' },
+  { label: 'clientes recuperados', value: '+35 mil' },
+  { label: 'aumento médio no faturamento', value: '+18%' },
+] as const
 
 const features = [
   {
-    icon: Sparkles,
-    title: 'IA no atendimento',
-    desc: 'Respostas contextuais, triagem e sugestões para sua equipe ganhar tempo.',
-  },
-  {
     icon: MessageCircle,
-    title: 'Conversas centralizadas',
-    desc: 'WhatsApp e canais em um só lugar, com histórico por cliente e pet.',
+    title: 'Atendimento automático',
+    description: 'Triagem, respostas e encaminhamento com contexto da clínica e do pet.',
   },
   {
     icon: Calendar,
     title: 'Agenda inteligente',
-    desc: 'Confirmações, lembretes e visão do dia para recepção e veterinários.',
+    description: 'Confirmações, reagendamentos e visão do dia para toda a equipe.',
   },
   {
-    icon: Users,
-    title: 'Equipe e permissões',
-    desc: 'Papéis claros (owner, admin, vet, recepção) com dados isolados por clínica.',
+    icon: Bell,
+    title: 'Lembretes por WhatsApp',
+    description: 'Vacinas, retornos e check-ups sem esforço manual da recepção.',
   },
   {
     icon: PawPrint,
-    title: 'Clientes e pets',
-    desc: 'Ficha unificada: tutores, animais, anotações e próximos passos.',
+    title: 'Gestão de pets',
+    description: 'Histórico unificado: tutores, animais, observações e próximos passos.',
   },
   {
-    icon: LineChart,
-    title: 'Financeiro e automações',
-    desc: 'Base pronta para acompanhar receitas e automatizar rotinas recorrentes.',
+    icon: UserPlus,
+    title: 'Recuperação de clientes',
+    description: 'Reativação com mensagens personalizadas e acompanhamento de retorno.',
+  },
+  {
+    icon: DollarSign,
+    title: 'Cobranças automáticas',
+    description: 'Fluxos para lembretes de pagamento e organização financeira básica.',
   },
 ] as const
 
-const steps = [
-  { n: '1', title: 'Crie sua conta', desc: 'Cadastro rápido com e-mail seguro via Supabase Auth.' },
-  { n: '2', title: 'Configure a clínica', desc: 'Onboarding guiado: dados, horários e equipe em minutos.' },
-  { n: '3', title: 'Atenda com a IA', desc: 'Dashboard, conversas e agenda integrados ao fluxo diário.' },
-] as const
-
-const linkPrimary = cn(
-  'inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-transparent bg-gradient-to-r from-brand-purple to-brand-blue px-5 text-base font-semibold text-white shadow-[0_10px_30px_rgba(124,58,237,0.28)] transition hover:brightness-[1.02] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/35 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950',
-)
-
-const linkOutline = cn(
-  'inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200/90 bg-white/55 px-5 text-base font-semibold text-ink shadow-sm transition hover:border-brand-purple/35 hover:bg-white/85 active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/35 focus-visible:ring-offset-2 dark:border-white/10 dark:bg-slate-950/35 dark:text-slate-100 dark:hover:bg-slate-900/55 dark:focus-visible:ring-offset-slate-950',
-)
-
-const linkOnDark = cn(
-  'inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/25 bg-white/10 px-5 text-base font-bold text-white backdrop-blur-sm transition hover:bg-white/15 active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
+const outlineBtn = cn(
+  'inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200/90 bg-white px-5 text-sm font-bold text-[#0F172A] shadow-sm transition hover:border-[#7C3AED]/35 hover:bg-slate-50 active:scale-[0.98] dark:border-white/10 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800',
 )
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-dvh overflow-x-hidden bg-surface text-ink dark:bg-slate-950 dark:text-slate-100">
-      <div className="pointer-events-none fixed inset-0 petvia-mesh opacity-95" />
-      <div className="pointer-events-none fixed inset-0 petvia-noise opacity-35 dark:opacity-20" />
+    <div className="relative min-h-dvh overflow-x-hidden bg-[#F8FAFC] text-[#0F172A] dark:bg-slate-950 dark:text-slate-100">
+      <div className="pointer-events-none fixed inset-0 opacity-[0.65] dark:opacity-30">
+        <div className="absolute -left-40 top-0 h-[420px] w-[420px] rounded-full bg-[#7C3AED]/15 blur-3xl" />
+        <div className="absolute right-0 top-40 h-[380px] w-[380px] rounded-full bg-[#3B82F6]/12 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-[360px] w-[360px] rounded-full bg-[#22D3C5]/10 blur-3xl" />
+      </div>
 
-      <header className="sticky top-0 z-50 border-b border-white/50 bg-white/65 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/55">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex items-center gap-2.5">
-            <PetviaLogo size={40} />
-            <div className="leading-tight">
-              <div className="text-sm font-extrabold tracking-tight sm:text-base">Petvia</div>
-              <div className="bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-[10px] font-bold uppercase tracking-wider text-transparent sm:text-xs">
-                IA para clínicas
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-600 md:flex dark:text-slate-300">
-            <a href="#funcionalidades" className="transition hover:text-brand-purple dark:hover:text-brand-teal">
-              Funcionalidades
-            </a>
-            <a href="#como-funciona" className="transition hover:text-brand-purple dark:hover:text-brand-teal">
-              Como funciona
-            </a>
-            <a href="#cta" className="transition hover:text-brand-purple dark:hover:text-brand-teal">
-              Começar
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
-            <Link
-              to="/login"
-              className="hidden rounded-2xl border border-slate-200/90 bg-white/60 px-3 py-2 text-xs font-bold text-ink shadow-sm transition hover:border-brand-purple/30 sm:inline-flex dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-100 dark:hover:border-brand-purple/40"
-            >
-              Entrar
-            </Link>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-brand-purple to-brand-blue px-3 py-2 text-xs font-bold text-white shadow-[0_10px_28px_rgba(124,58,237,0.35)] transition hover:brightness-[1.03] sm:px-4 sm:text-sm"
-            >
-              Criar conta
-              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="relative z-10">
-        <section className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 sm:pt-14 lg:pt-20">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
-            <motion.div className="lg:col-span-7" {...fadeUp}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-purple/20 bg-brand-purple/10 px-3 py-1 text-xs font-bold text-brand-purple dark:border-brand-teal/25 dark:bg-brand-teal/10 dark:text-brand-teal">
-                <Zap className="h-3.5 w-3.5" />
-                Funcionário digital para veterinária
+        {/* Hero + produto visual */}
+        <section id="produto" className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:pt-16">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: motionEase }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/20 bg-white/80 px-3 py-1 text-xs font-bold text-[#7C3AED] shadow-sm backdrop-blur dark:border-[#22D3C5]/30 dark:bg-slate-900/60 dark:text-[#22D3C5]">
+                <Sparkles className="h-3.5 w-3.5" />
+                IA que trabalha por você, 24h por dia
               </div>
-              <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.35rem]">
-                Atenda mais, com menos{' '}
-                <span className="bg-gradient-to-r from-brand-purple via-brand-blue to-brand-teal bg-clip-text text-transparent">
-                  atrito operacional
+              <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.15rem]">
+                Transforme sua clínica em uma{' '}
+                <span className="bg-gradient-to-r from-[#7C3AED] via-[#3B82F6] to-[#22D3C5] bg-clip-text text-transparent">
+                  operação inteligente.
                 </span>
-                .
               </h1>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-400 sm:text-lg">
-                Petvia IA organiza conversas, agenda e equipe em um painel moderno — com autenticação, permissões e dados
-                separados por clínica.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#64748B] dark:text-slate-400">
+                PetVia é o funcionário digital que atende clientes, agenda consultas, envia lembretes e organiza sua clínica
+                veterinária 24h por dia.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link to="/register" className={linkPrimary}>
-                  Começar grátis
+              <p className="mt-2 text-sm font-semibold italic text-[#64748B] dark:text-slate-500">
+                Sua clínica veterinária no automático.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to="/register" className={cn(gradientButtonClass)}>
+                  Começar gratuitamente
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link to="/login" className={linkOutline}>
-                  Já tenho conta
-                </Link>
+                <a href="#produto" className={outlineBtn}>
+                  <Play className="h-4 w-4 fill-current" />
+                  Ver demonstração
+                </a>
               </div>
-              <ul className="mt-10 flex flex-col gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-2">
-                {['Supabase Auth + Postgres', 'RLS por clínica', 'UX pensada para recepção'].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <motion.div
-              className="relative lg:col-span-5"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-brand-purple/25 via-brand-blue/15 to-brand-teal/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/80 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70 dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-                <div className="flex items-center justify-between gap-3 border-b border-slate-200/80 pb-4 dark:border-white/10">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Hoje</p>
-                    <p className="text-lg font-extrabold">Clínica Aurora</p>
-                  </div>
-                  <div className="rounded-2xl bg-gradient-to-r from-brand-purple to-brand-blue px-3 py-1.5 text-xs font-bold text-white">
-                    IA ativa
-                  </div>
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {[
-                    { l: 'Consultas', v: '12', sub: '+2 vs ontem' },
-                    { l: 'Respostas IA', v: '48', sub: 'últimas 24h' },
-                    { l: 'Confirmações', v: '9', sub: 'WhatsApp' },
-                    { l: 'Pets ativos', v: '186', sub: 'cadastro' },
-                  ].map((c) => (
-                    <div
-                      key={c.l}
-                      className="rounded-2xl border border-slate-200/70 bg-white/70 p-4 dark:border-white/10 dark:bg-slate-950/40"
-                    >
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{c.l}</p>
-                      <p className="mt-1 text-2xl font-extrabold tabular-nums">{c.v}</p>
-                      <p className="mt-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">{c.sub}</p>
-                    </div>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <div className="flex -space-x-2">
+                  {['bg-violet-400', 'bg-blue-400', 'bg-teal-400', 'bg-amber-400'].map((c, i) => (
+                    <span
+                      key={i}
+                      className={cn('inline-flex h-9 w-9 rounded-full border-2 border-white ring-1 ring-slate-200/80', c)}
+                    />
                   ))}
                 </div>
-                <div className="mt-4 rounded-2xl border border-dashed border-brand-purple/25 bg-brand-purple/[0.06] p-4 dark:border-brand-teal/30 dark:bg-brand-teal/[0.06]">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-purple to-brand-blue text-white">
-                      <Sparkles className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">Sugestão da IA</p>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                        Oferecer check-up anual para tutores com vacina vencendo em 30 dias — posso montar a mensagem.
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-[#64748B] dark:text-slate-400">
+                  <span className="flex text-[#7C3AED]">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="h-4 w-4 fill-current" />
+                    ))}
+                  </span>
+                  Mais de 1.200 clínicas confiam na PetVia
                 </div>
               </div>
             </motion.div>
+
+            <div className="relative mx-auto w-full max-w-lg lg:mx-0">
+              <FloatingCard
+                title="Consulta confirmada"
+                subtitle="Mel · 10:30"
+                tone="purple"
+                delay={0.25}
+                icon={<Zap className="h-4 w-4" />}
+                className="-left-2 top-4 z-20 sm:-left-6"
+              />
+              <FloatingCard
+                title="Vacina lembrada"
+                subtitle="Luna · V8"
+                tone="green"
+                delay={0.4}
+                icon={<Bell className="h-4 w-4" />}
+                className="-right-2 top-1/3 z-20 sm:-right-4"
+              />
+              <FloatingCard
+                title="Cliente recuperado"
+                subtitle="Bruno voltou!"
+                tone="teal"
+                delay={0.55}
+                icon={<UserPlus className="h-4 w-4" />}
+                className="bottom-24 left-0 z-20 sm:-left-8"
+              />
+              <FloatingCard
+                title="IA respondendo"
+                subtitle="WhatsApp · agora"
+                tone="blue"
+                delay={0.7}
+                icon={<MessageCircle className="h-4 w-4" />}
+                className="bottom-8 right-0 z-20 sm:-right-6"
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: motionEase }}
+                className="relative z-10"
+              >
+                <DashboardMockup variant="hero" />
+              </motion.div>
+            </div>
           </div>
         </section>
 
-        <section id="funcionalidades" className="border-y border-white/50 bg-white/40 py-16 dark:border-white/10 dark:bg-slate-950/40">
+        {/* Stats */}
+        <section className="border-y border-slate-200/80 bg-white/70 py-12 backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/50">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+            {stats.map((s) => (
+              <div key={s.value} className="text-center">
+                <p className="text-3xl font-extrabold tracking-tight text-[#7C3AED] dark:text-[#22D3C5]">{s.value}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-slate-400">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Recursos */}
+        <section id="recursos" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, ease: motionEase }}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Tudo que sua clínica precisa para{' '}
+              <span className="relative inline-block">
+                crescer
+                <span className="absolute -bottom-1 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#22D3C5]" />
+              </span>
+            </h2>
+            <p className="mt-3 text-[#64748B] dark:text-slate-400">
+              Um painel só — da recepção ao veterinário, com permissões e dados por clínica.
+            </p>
+          </motion.div>
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f, i) => (
+              <FeatureCard key={f.title} {...f} delay={i * 0.06} />
+            ))}
+          </div>
+        </section>
+
+        {/* Como funciona */}
+        <section id="como-funciona" className="border-t border-slate-200/80 bg-gradient-to-b from-white/80 to-[#F8FAFC] py-20 dark:border-white/10 dark:from-slate-900/60 dark:to-slate-950">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <motion.div className="mx-auto max-w-2xl text-center" {...fadeUp}>
-              <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Tudo que a clínica precisa para escalar</h2>
-              <p className="mt-3 text-slate-600 dark:text-slate-400">
-                Módulos integrados — você começa com a base sólida (auth, clínica, equipe) e evolui para clientes, pets e
-                agenda no mesmo lugar.
-              </p>
-            </motion.div>
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map(({ icon: Icon, title, desc }, i) => (
-                <motion.article
-                  key={title}
-                  {...fadeUp}
-                  transition={{ ...fadeUp.transition, delay: i * 0.05 }}
-                  className="group rounded-3xl border border-white/60 bg-white/75 p-6 shadow-sm backdrop-blur-xl transition hover:border-brand-purple/25 hover:shadow-[0_16px_50px_rgba(124,58,237,0.12)] dark:border-white/10 dark:bg-slate-900/55 dark:hover:border-brand-teal/30"
+            <h2 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Como funciona</h2>
+            <div className="mx-auto mt-12 grid max-w-4xl gap-8 md:grid-cols-3">
+              {[
+                { n: '1', t: 'Conecte sua clínica', d: 'Cadastro, equipe e dados iniciais em minutos com onboarding guiado.' },
+                { n: '2', t: 'Ative sua IA', d: 'Defina tom de voz, horários e canais — a IA aprende o fluxo da sua clínica.' },
+                { n: '3', t: 'Automatize sua rotina', d: 'Lembretes, agenda e conversas passam a rodar com menos atrito operacional.' },
+              ].map((step, i) => (
+                <motion.div
+                  key={step.n}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.45, ease: motionEase }}
+                  className="relative rounded-3xl border border-white/80 bg-white/90 p-6 text-center shadow-sm dark:border-white/10 dark:bg-slate-900/70"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-purple/15 to-brand-teal/15 text-brand-purple dark:text-brand-teal">
-                    <Icon className="h-6 w-6" />
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] text-sm font-extrabold text-white">
+                    {step.n}
                   </div>
-                  <h3 className="mt-4 text-lg font-extrabold">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{desc}</p>
-                </motion.article>
+                  <h3 className="mt-4 text-lg font-extrabold">{step.t}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#64748B] dark:text-slate-400">{step.d}</p>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="como-funciona" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <motion.div className="mx-auto max-w-2xl text-center" {...fadeUp}>
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Do cadastro ao primeiro dia útil</h2>
-            <p className="mt-3 text-slate-600 dark:text-slate-400">Fluxo enxuto para sua equipe não perder tempo com setup.</p>
-          </motion.div>
-          <div className="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-3">
-            {steps.map((s, i) => (
-              <motion.div
-                key={s.n}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.08 }}
-                className="relative rounded-3xl border border-white/60 bg-white/70 p-6 text-center dark:border-white/10 dark:bg-slate-900/50"
-              >
-                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-purple to-brand-blue text-sm font-extrabold text-white">
-                  {s.n}
-                </div>
-                <h3 className="mt-4 text-lg font-extrabold">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{s.desc}</p>
-              </motion.div>
-            ))}
+        {/* Preços (mock) */}
+        <section id="precos" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <div className="mx-auto max-w-xl rounded-[2rem] border border-white/80 bg-white/90 p-8 text-center shadow-[0_20px_60px_rgba(124,58,237,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70">
+            <h2 className="text-2xl font-extrabold">Preços sob medida</h2>
+            <p className="mt-2 text-sm text-[#64748B] dark:text-slate-400">
+              Planos para clínicas solo até redes — fale com a equipe PetVia quando sair do beta.
+            </p>
+            <Link to="/register" className="mt-6 inline-flex">
+              <span className={cn(gradientButtonClass)}>Quero entrar na lista</span>
+            </Link>
           </div>
         </section>
 
-        <section id="cta" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+        {/* CTA */}
+        <section id="cta" className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
           <motion.div
-            {...fadeUp}
-            className="relative overflow-hidden rounded-[2rem] border border-white/50 bg-gradient-to-br from-brand-purple via-brand-blue to-brand-teal p-[1px] shadow-[0_24px_80px_rgba(124,58,237,0.25)]"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: motionEase }}
+            className="relative overflow-hidden rounded-[2rem] border border-white/50 bg-gradient-to-br from-[#7C3AED] via-[#6366F1] to-[#22D3C5] p-[1px] shadow-[0_28px_80px_rgba(124,58,237,0.25)]"
           >
-            <div className="relative rounded-[1.96rem] bg-slate-950 px-6 py-12 text-center sm:px-12 sm:py-14">
+            <div className="relative rounded-[1.96rem] bg-[#0F172A] px-6 py-14 text-center sm:px-12">
               <div className="pointer-events-none absolute inset-0 opacity-40">
-                <div className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-brand-purple blur-3xl" />
-                <div className="absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-brand-teal blur-3xl" />
+                <div className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#7C3AED] blur-3xl" />
+                <div className="absolute -right-10 bottom-0 h-56 w-56 rounded-full bg-[#22D3C5] blur-3xl" />
               </div>
-              <Shield className="relative mx-auto h-10 w-10 text-brand-teal" />
-              <h2 className="relative mt-4 text-2xl font-extrabold text-white sm:text-3xl">Pronto para modernizar o atendimento?</h2>
-              <p className="relative mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-300 sm:text-base">
-                Crie sua conta, configure a clínica no onboarding e entre no dashboard em poucos minutos.
+              <h2 className="relative text-2xl font-extrabold text-white sm:text-3xl">Pronto para deixar sua clínica no automático?</h2>
+              <p className="relative mx-auto mt-3 max-w-md text-sm text-slate-300">
+                Crie sua conta e configure a clínica no onboarding em poucos minutos.
               </p>
-              <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-                <Link to="/register" className={linkPrimary}>
-                  Criar conta grátis
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link to="/login" className={linkOnDark}>
-                  Entrar
+              <div className="relative mt-8">
+                <Link to="/register" className={cn(gradientButtonClass)}>
+                  Criar minha conta
                 </Link>
               </div>
             </div>
@@ -297,26 +290,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="relative z-10 border-t border-white/50 bg-white/50 py-10 text-center text-sm text-slate-500 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/50 dark:text-slate-400">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
-          <div className="flex items-center gap-2">
-            <PetviaLogo size={28} />
-            <span className="font-bold text-ink dark:text-slate-200">Petvia IA</span>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4 font-semibold">
-            <Link to="/login" className="hover:text-brand-purple dark:hover:text-brand-teal">
-              Entrar
-            </Link>
-            <Link to="/register" className="hover:text-brand-purple dark:hover:text-brand-teal">
-              Registrar
-            </Link>
-            <a href="#funcionalidades" className="hover:text-brand-purple dark:hover:text-brand-teal">
-              Funcionalidades
-            </a>
-          </div>
-          <p className="text-xs sm:text-sm">© {new Date().getFullYear()} Petvia IA. Todos os direitos reservados.</p>
-        </div>
-      </footer>
+      <FooterPetVia />
     </div>
   )
 }

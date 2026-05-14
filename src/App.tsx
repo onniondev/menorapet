@@ -33,6 +33,7 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<PublicHome />} />
+          <Route path="/home" element={<PublicHome />} />
 
           <Route element={<GuestGate />}>
             <Route path="/login" element={<LoginPage />} />
