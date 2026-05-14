@@ -9,6 +9,15 @@ Copie `.env.example` para `.env.local` e preencha:
 - `VITE_SUPABASE_URL` — URL do projeto (`https://<ref>.supabase.co`)
 - `VITE_SUPABASE_ANON_KEY` — chave pública (anon ou publishable do dashboard)
 
+### Produção (ex.: Vercel)
+
+O Vite **injeta** `VITE_*` no JavaScript **durante o `npm run build`**. O `.env.local` **não** sobe para a Vercel.
+
+1. **Vercel** → projeto → **Settings** → **Environment Variables**
+2. Cria `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (mesmos valores do Supabase → **Settings → API**)
+3. Ambiente: **Production** (e **Preview** se usares PR previews)
+4. **Deployments** → **Redeploy** no último deploy (ou novo commit), senão o bundle antigo continua sem as variáveis.
+
 ## Banco de dados (migração)
 
 O schema inicial está em `supabase/migrations/20260214120000_petvia_foundation.sql` (tabelas `profiles`, `clinics`, `clinic_members`, `invitations`, `audit_logs`, triggers, RLS e RPC `create_clinic_onboarding`).

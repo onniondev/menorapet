@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { SupabaseEnvBanner } from '../../components/auth/SupabaseEnvBanner'
 import { useAuth } from '../../context/AuthContext'
 import { PetviaLogo } from '../../components/PetviaLogo'
 import { ThemeToggle } from '../../components/layout/ThemeToggle'
@@ -35,6 +36,8 @@ export default function ForgotPasswordPage() {
           <PetviaLogo size={44} />
           <ThemeToggle />
         </div>
+
+        <SupabaseEnvBanner />
 
         <Card padding="lg">
           <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-brand-purple hover:underline dark:text-brand-teal">
