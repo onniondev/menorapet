@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import Agenda from './pages/Agenda'
 import Automacoes from './pages/Automacoes'
 import Configuracoes from './pages/Configuracoes'
+import CentralIA from './pages/CentralIA'
 import Conversas from './pages/Conversas'
 import Dashboard from './pages/Dashboard'
 import Financeiro from './pages/Financeiro'
@@ -25,6 +26,7 @@ export default function App() {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="conversas" element={<Conversas />} />
+              <Route path="central-ia" element={<CentralIA />} />
               <Route path="agenda" element={<Agenda />} />
               <Route path="pacientes" element={<Pacientes />} />
               <Route path="pacientes/:id" element={<PacienteDetalhe />} />

@@ -33,7 +33,7 @@ const IMG_CAT =
 export default function Login() {
   const navigate = useNavigate()
   const { login, user } = useAuth()
-  const [email, setEmail] = useState('contato@clinica.com')
+  const [email, setEmail] = useState('ana.aurora@petvia.app')
   const [password, setPassword] = useState('demo123')
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)

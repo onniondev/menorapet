@@ -16,7 +16,7 @@ export function Input({ label, hint, left, right, className = '', id, ...rest }:
         <span className="mb-1.5 block text-sm font-medium text-ink/80 dark:text-slate-200/90">{label}</span>
       ) : null}
       <div
-        className={`flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white/70 px-3 py-2.5 shadow-inner shadow-slate-900/5 transition focus-within:border-brand-purple/45 focus-within:ring-2 focus-within:ring-brand-purple/20 dark:border-white/10 dark:bg-slate-950/40 dark:shadow-none ${className}`}
+        className={`flex min-h-11 items-center gap-2 rounded-2xl border border-slate-200/85 bg-white/75 px-3.5 py-2 shadow-inner shadow-slate-900/[0.04] transition focus-within:border-brand-purple/45 focus-within:ring-2 focus-within:ring-brand-purple/20 dark:border-white/10 dark:bg-slate-950/40 dark:shadow-none ${className}`}
       >
         {left ? <span className="text-slate-400 dark:text-slate-500">{left}</span> : null}
         <input

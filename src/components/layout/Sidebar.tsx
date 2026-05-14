@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   LogOut,
   MessageCircle,
+  Orbit,
   PawPrint,
   Settings2,
   Sparkles,
@@ -11,11 +12,13 @@ import {
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { Button } from '../ui/Button'
 import { PetviaLogo } from '../PetviaLogo'
 
 const items = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/app/conversas', label: 'Conversas', icon: MessageCircle },
+  { to: '/app/central-ia', label: 'Central IA', icon: Orbit },
   { to: '/app/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/app/pacientes', label: 'Pacientes', icon: PawPrint },
   { to: '/app/automacoes', label: 'Automações', icon: Sparkles },
@@ -27,58 +30,63 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { user, logout } = useAuth()
 
   return (
-    <aside className="flex h-full w-72 shrink-0 flex-col border-r border-slate-200/70 bg-white/70 px-4 py-6 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/50">
-      <div className="flex items-center gap-3 px-2">
+    <aside className="flex h-[calc(100dvh-3rem)] w-[min(18rem,92vw)] shrink-0 flex-col overflow-hidden rounded-3xl border border-white/60 bg-white/55 p-4 shadow-[0_18px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl ring-1 ring-white/70 dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_18px_70px_rgba(0,0,0,0.55)] dark:ring-white/5">
+      <div className="flex items-center gap-3 px-1">
         <PetviaLogo size={44} />
-        <div className="leading-tight">
-          <div className="text-base font-bold tracking-tight text-ink dark:text-white">Petvia</div>
+        <div className="min-w-0 leading-tight">
+          <div className="truncate text-base font-extrabold tracking-tight text-ink dark:text-white">Petvia</div>
           <div className="bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-xs font-semibold text-transparent">
             IA para clínicas
           </div>
         </div>
       </div>
 
-      <nav className="mt-8 flex flex-1 flex-col gap-1">
+      <nav className="mt-6 flex flex-1 flex-col gap-1 overflow-auto pr-1">
         {items.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
             onClick={onNavigate}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${
+              `group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-gradient-to-r from-brand-purple/15 to-brand-blue/10 text-brand-purple ring-1 ring-brand-purple/25 dark:from-brand-purple/25 dark:to-brand-blue/15 dark:text-white'
-                  : 'text-slate-600 hover:bg-slate-900/5 hover:text-ink dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
+                  ? 'bg-gradient-to-r from-brand-purple/18 via-brand-blue/10 to-brand-teal/10 text-ink shadow-sm ring-1 ring-brand-purple/25 dark:text-white dark:ring-brand-purple/35'
+                  : 'text-slate-600 hover:bg-slate-900/[0.04] hover:text-ink dark:text-slate-300 dark:hover:bg-white/[0.06] dark:hover:text-white'
               }`
             }
           >
-            <Icon className="h-5 w-5 shrink-0 opacity-90" />
-            {label}
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900/[0.03] ring-1 ring-slate-900/5 transition group-hover:bg-white/70 dark:bg-white/[0.04] dark:ring-white/10 dark:group-hover:bg-slate-900/55">
+              <Icon className="h-5 w-5 opacity-90" />
+            </span>
+            <span className="min-w-0 truncate">{label}</span>
           </NavLink>
         ))}
       </nav>
 
-      <div className="mt-auto space-y-3 rounded-2xl border border-slate-200/70 bg-surface/80 p-3 dark:border-white/10 dark:bg-slate-900/40">
+      <div className="mt-3 space-y-3 rounded-2xl border border-slate-200/70 bg-white/55 p-3 shadow-inner shadow-slate-900/[0.03] dark:border-white/10 dark:bg-slate-950/35">
         <div className="flex items-start gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-purple to-brand-blue text-xs font-bold text-white">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-purple to-brand-blue text-white shadow-lg shadow-brand-purple/20">
             <Users className="h-4 w-4" />
           </div>
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-ink dark:text-white">{user?.name}</div>
+            <div className="truncate text-sm font-bold text-ink dark:text-white">{user?.name}</div>
             <div className="truncate text-xs text-slate-500 dark:text-slate-400">{user?.clinic}</div>
           </div>
         </div>
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="md"
+          fullWidth
+          align="center"
+          leftIcon={<LogOut className="h-4 w-4" />}
           onClick={() => {
             logout()
             onNavigate?.()
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white/70 py-2 text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-200 dark:hover:border-red-500/30 dark:hover:bg-red-500/10 dark:hover:text-red-200"
         >
-          <LogOut className="h-4 w-4" />
           Sair
-        </button>
+        </Button>
       </div>
     </aside>
   )

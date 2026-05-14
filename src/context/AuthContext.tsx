@@ -25,12 +25,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
 
   const login = useCallback((email: string) => {
-    const display =
-      email.includes('@') && !email.startsWith('@')
-        ? email.split('@')[0]?.replace(/\./g, ' ') ?? 'Equipe'
-        : 'Equipe Petvia'
+    const raw = email.trim().toLowerCase().split('@')[0] ?? 'ana'
+    const first = raw.split(/[._+-]/).filter(Boolean)[0] ?? 'ana'
+    const cap = first.charAt(0).toUpperCase() + first.slice(1).toLowerCase()
+    const safe = cap.toLowerCase() === 'contato' ? 'Ana' : cap
+
     setUser({
-      name: display.replace(/\b\w/g, (c) => c.toUpperCase()),
+      name: `Dra. ${safe}`,
       role: 'Administradora',
       clinic: 'Clínica Veterinária Aurora',
     })
