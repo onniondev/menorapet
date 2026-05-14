@@ -82,7 +82,11 @@ export async function fetchTodayAppointmentsWithRelations(clinicId: string): Pro
     .order('scheduled_at', { ascending: true })
   if (error) throw error
 
-  const list = (rows ?? []) as Appointment[]
+  return enrichAppointmentsWithRelations((rows ?? []) as Appointment[])
+}
+
+export async function enrichAppointmentsWithRelations(rows: Appointment[]): Promise<AppointmentWithRelations[]> {
+  const list = rows
   if (list.length === 0) return []
 
   const petIds = [...new Set(list.map((a) => a.pet_id))]
@@ -117,6 +121,77 @@ export async function fetchTodayAppointmentsWithRelations(clinicId: string): Pro
       veterinarian_name: vn ?? null,
     }
   })
+}
+
+export async function listAppointmentsWithRelationsInRange(
+  clinicId: string,
+  startIso: string,
+  endIso: string,
+): Promise<AppointmentWithRelations[]> {
+  const { data: rows, error } = await sb()
+    .from('appointments')
+    .select('id, clinic_id, pet_id, client_id, veterinarian_id, service_type, scheduled_at, status, notes, created_at')
+    .eq('clinic_id', clinicId)
+    .gte('scheduled_at', startIso)
+    .lte('scheduled_at', endIso)
+    .order('scheduled_at', { ascending: true })
+  if (error) throw error
+  return enrichAppointmentsWithRelations((rows ?? []) as Appointment[])
+}
+
+export type AppointmentWrite = {
+  clinic_id: string
+  pet_id: string
+  client_id: string
+  veterinarian_id: string | null
+  service_type: string
+  scheduled_at: string
+  status: Appointment['status']
+  notes?: string | null
+}
+
+export async function createAppointment(input: AppointmentWrite): Promise<string> {
+  const { data, error } = await sb()
+    .from('appointments')
+    .insert({
+      clinic_id: input.clinic_id,
+      pet_id: input.pet_id,
+      client_id: input.client_id,
+      veterinarian_id: input.veterinarian_id,
+      service_type: input.service_type,
+      scheduled_at: input.scheduled_at,
+      status: input.status,
+      notes: input.notes ?? null,
+    })
+    .select('id')
+    .single()
+  if (error) throw error
+  return (data as { id: string }).id
+}
+
+export async function updateAppointment(
+  id: string,
+  patch: Partial<Pick<AppointmentWrite, 'pet_id' | 'client_id' | 'veterinarian_id' | 'service_type' | 'scheduled_at' | 'status' | 'notes'>>,
+): Promise<void> {
+  const { error } = await sb().from('appointments').update(patch).eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteAppointment(id: string): Promise<void> {
+  const { error } = await sb().from('appointments').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function listAppointmentsForPet(clinicId: string, petId: string, limit = 20): Promise<AppointmentWithRelations[]> {
+  const { data: rows, error } = await sb()
+    .from('appointments')
+    .select('id, clinic_id, pet_id, client_id, veterinarian_id, service_type, scheduled_at, status, notes, created_at')
+    .eq('clinic_id', clinicId)
+    .eq('pet_id', petId)
+    .order('scheduled_at', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  return enrichAppointmentsWithRelations((rows ?? []) as Appointment[])
 }
 
 export async function fetchAttendanceSeries(

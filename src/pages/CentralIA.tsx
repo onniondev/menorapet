@@ -1,9 +1,14 @@
 import { motion } from 'framer-motion'
-import { Activity, Bot, MessageCircle, RefreshCw, Sparkles, Wallet } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Activity, Bot, CheckCircle2, MessageCircle, RefreshCw, Sparkles, Wallet, XCircle } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { centralIaNodes, centralIaStats } from '../data/mock'
 import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { useClinicContext } from '../hooks/useClinicContext'
+import { isSupabaseConfigured } from '../lib/supabase'
+import * as dashboardService from '../services/dashboardService'
 
 const thoughts = [
   'Analisando clientes inativos…',
@@ -14,7 +19,20 @@ const thoughts = [
 ]
 
 export default function CentralIA() {
+  const { clinicId } = useClinicContext()
+  const qc = useQueryClient()
   const [idx, setIdx] = useState(0)
+
+  const insightsQ = useQuery({
+    queryKey: ['ai-insights', clinicId],
+    enabled: Boolean(clinicId && isSupabaseConfigured),
+    queryFn: () => dashboardService.fetchOpenAiInsights(clinicId!),
+  })
+
+  const insightM = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'dismissed' | 'resolved' }) => dashboardService.updateAiInsightStatus(id, status),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['ai-insights', clinicId] }),
+  })
 
   useEffect(() => {
     const t = window.setInterval(() => setIdx((v) => (v + 1) % thoughts.length), 2600)
@@ -156,7 +174,7 @@ export default function CentralIA() {
           </div>
           <div>
             <div className="text-sm font-extrabold">Operação</div>
-            <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">Automações competindo por prioridade (mock).</div>
+            <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">Automações e insights abertos abaixo.</div>
           </div>
         </Card>
         <Card padding="sm" className="flex items-start gap-3">
@@ -169,6 +187,44 @@ export default function CentralIA() {
           </div>
         </Card>
       </div>
+
+      {isSupabaseConfigured && clinicId ? (
+        <Card padding="md">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-base font-extrabold">Insights da IA (abertos)</h3>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">Tabela ai_insights · status open</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" leftIcon={<RefreshCw className="h-3.5 w-3.5" />} onClick={() => void qc.invalidateQueries({ queryKey: ['ai-insights', clinicId] })}>
+              Atualizar
+            </Button>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(insightsQ.data ?? []).length === 0 ? (
+              <p className="text-sm text-slate-600 dark:text-slate-400">Nenhum insight aberto no momento.</p>
+            ) : (
+              (insightsQ.data ?? []).map((ins) => (
+                <div key={ins.id} className="rounded-2xl border border-slate-200/80 p-4 dark:border-white/10">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-extrabold">{ins.title}</span>
+                    <Badge tone="purple">{ins.priority}</Badge>
+                    <Badge tone="neutral">{ins.type}</Badge>
+                  </div>
+                  {ins.description ? <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{ins.description}</p> : null}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button type="button" size="sm" variant="outline" leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />} onClick={() => insightM.mutate({ id: ins.id, status: 'resolved' })}>
+                      Resolver
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" leftIcon={<XCircle className="h-3.5 w-3.5" />} onClick={() => insightM.mutate({ id: ins.id, status: 'dismissed' })}>
+                      Dispensar
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </Card>
+      ) : null}
     </div>
   )
 }

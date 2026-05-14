@@ -30,3 +30,24 @@ export async function createClinicOnboarding(payload: OnboardingPayload) {
   if (error) throw error
   return data as string
 }
+
+export async function updateClinicRecord(
+  clinicId: string,
+  patch: Partial<{
+    name: string
+    phone: string | null
+    whatsapp_number: string | null
+    email: string | null
+    opening_hours: string | null
+    vet_count: number | null
+    main_services: string | null
+    city: string | null
+    state: string | null
+    address: string | null
+    plan: string
+  }>,
+): Promise<void> {
+  if (!supabase) throw new Error('Supabase não configurado')
+  const { error } = await supabase.from('clinics').update(patch).eq('id', clinicId)
+  if (error) throw error
+}

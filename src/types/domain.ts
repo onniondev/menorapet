@@ -97,6 +97,7 @@ export type Automation = {
   status: string
   executions_count: number
   created_at: string
+  description?: string | null
 }
 
 export type AiInsight = {
@@ -108,6 +109,20 @@ export type AiInsight = {
   priority: string
   status: string
   created_at: string
+}
+
+export type InventoryItem = {
+  id: string
+  clinic_id: string
+  name: string
+  sku: string | null
+  quantity: number
+  unit: string
+  min_quantity: number
+  category: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
 }
 
 export type AttendanceSeriesPoint = {

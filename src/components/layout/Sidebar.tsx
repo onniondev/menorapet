@@ -21,6 +21,7 @@ import { toast } from 'sonner'
 import { useAuth } from '../../context/AuthContext'
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics'
 import { useCurrentClinic } from '../../hooks/useCurrentClinic'
+import { ClinicSwitcher } from './ClinicSwitcher'
 import { LogoPetVia } from '../petvia/LogoPetVia'
 import { Button } from '../ui/Button'
 
@@ -53,14 +54,19 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <aside className="flex h-[calc(100dvh-3rem)] w-[min(18rem,92vw)] shrink-0 flex-col overflow-hidden rounded-3xl border border-[#E2E8F0] bg-white p-4 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
-      <div className="flex items-center gap-3 px-1">
-        <LogoPetVia size={44} />
-        <div className="min-w-0 leading-tight">
-          <div className="truncate text-base font-extrabold tracking-tight text-[#0F172A]">PetVia</div>
-          <div className="truncate bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-xs font-semibold text-transparent">
-            Clínica no automático
+      <div className="flex items-center justify-between gap-2 px-1">
+        <div className="flex min-w-0 items-center gap-3">
+          <LogoPetVia size={44} />
+          <div className="min-w-0 leading-tight">
+            <div className="truncate text-base font-extrabold tracking-tight text-[#0F172A]">PetVia</div>
+            <div className="truncate bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-xs font-semibold text-transparent">
+              Clínica no automático
+            </div>
           </div>
         </div>
+      </div>
+      <div className="mt-3 px-1">
+        <ClinicSwitcher />
       </div>
 
       <nav className="mt-6 flex flex-1 flex-col gap-1 overflow-auto pr-1">

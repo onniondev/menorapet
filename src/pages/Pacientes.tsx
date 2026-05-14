@@ -1,58 +1,151 @@
-import { ArrowRight, Search } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowRight, Plus, Search, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { patients } from '../data/mock'
+import { toast } from 'sonner'
+import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Input } from '../components/ui/Input'
+import { useClinicContext } from '../hooks/useClinicContext'
+import { isSupabaseConfigured } from '../lib/supabase'
+import * as clientService from '../services/clientService'
+import * as petService from '../services/petService'
 
 export default function Pacientes() {
+  const { clinicId } = useClinicContext()
+  const qc = useQueryClient()
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [species, setSpecies] = useState('')
+  const [breed, setBreed] = useState('')
+  const [clientId, setClientId] = useState('')
+
+  const petsQ = useQuery({
+    queryKey: ['pets', clinicId, q],
+    enabled: Boolean(clinicId && isSupabaseConfigured),
+    queryFn: () => petService.listPetsWithOwners(clinicId!, q || undefined),
+  })
+
+  const clientsQ = useQuery({
+    queryKey: ['clients', clinicId, 'all'],
+    enabled: Boolean(clinicId && isSupabaseConfigured && open),
+    queryFn: () => clientService.listClients(clinicId!),
+  })
+
+  const createM = useMutation({
+    mutationFn: () => petService.createPet(clinicId!, { client_id: clientId, name, species, breed }),
+    onSuccess: () => {
+      toast.success('Pet cadastrado.')
+      void qc.invalidateQueries({ queryKey: ['pets', clinicId] })
+      setOpen(false)
+      setName('')
+      setSpecies('')
+      setBreed('')
+      setClientId('')
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const delM = useMutation({
+    mutationFn: (id: string) => petService.deletePet(id),
+    onSuccess: () => {
+      toast.success('Pet removido.')
+      void qc.invalidateQueries({ queryKey: ['pets', clinicId] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  if (!isSupabaseConfigured) {
+    return <Card padding="lg">Configure o Supabase para listar pets.</Card>
+  }
+  if (!clinicId) return null
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-extrabold tracking-tight">Pacientes</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Pets cadastrados · dados mockados</p>
+          <h2 className="text-2xl font-extrabold tracking-tight">Pets</h2>
+          <p className="mt-1 text-sm text-slate-600">Pacientes vinculados aos tutores</p>
         </div>
-        <div className="w-full sm:max-w-md">
-          <Input placeholder="Buscar por nome, tutor ou espécie…" left={<Search className="h-4 w-4" />} />
-        </div>
+        <Button type="button" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setOpen(true)}>
+          Novo pet
+        </Button>
+      </div>
+
+      <div className="max-w-md">
+        <Input placeholder="Buscar por nome, espécie ou raça…" left={<Search className="h-4 w-4" />} value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {patients.map((p) => (
-          <Card key={p.id} className="group relative overflow-hidden">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-brand-purple/15 to-brand-teal/10 blur-2xl transition group-hover:opacity-100" />
-            <div className="relative flex items-start justify-between gap-3">
-              <div>
-                <div className="text-lg font-extrabold tracking-tight">{p.name}</div>
-                <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">{p.species}</div>
-              </div>
-              <span className="rounded-full bg-slate-900/5 px-2 py-1 text-[11px] font-semibold text-slate-700 dark:bg-white/10 dark:text-slate-200">
-                ativo
-              </span>
+        {(petsQ.data ?? []).map((p) => (
+          <Card key={p.id} padding="md" className="border-[#E2E8F0] shadow-sm">
+            <div className="text-lg font-extrabold">{p.name}</div>
+            <div className="mt-1 text-sm text-slate-600">
+              {[p.species, p.breed].filter(Boolean).join(' · ') || '—'}
             </div>
-            <div className="relative mt-4 space-y-2 text-sm">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-slate-500 dark:text-slate-400">Responsável</span>
-                <span className="font-semibold">{p.owner}</span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-slate-500 dark:text-slate-400">Última consulta</span>
-                <span className="font-semibold">{p.lastVisit}</span>
-              </div>
-              <div className="rounded-2xl border border-slate-200/70 bg-white/50 px-3 py-2 text-xs font-semibold text-slate-700 dark:border-white/10 dark:bg-slate-950/35 dark:text-slate-200">
-                {p.status}
-              </div>
+            <div className="mt-2 text-sm font-semibold text-slate-500">Tutor: {p.client_name ?? '—'}</div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                to={`/app/pets/${p.id}`}
+                className="inline-flex items-center gap-2 text-sm font-extrabold text-brand-purple hover:underline"
+              >
+                Ver detalhes
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Button type="button" size="sm" variant="outline" leftIcon={<Trash2 className="h-3.5 w-3.5" />} onClick={() => { if (confirm('Remover pet?')) delM.mutate(p.id) }}>
+                Excluir
+              </Button>
             </div>
-            <Link
-              to={`/app/pets/${p.id}`}
-              className="relative mt-4 inline-flex items-center gap-2 text-sm font-extrabold text-brand-purple hover:underline dark:text-brand-teal"
-            >
-              Ver detalhes
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </Card>
         ))}
       </div>
+
+      {open ? (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/50 p-4 pt-16 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-extrabold">Novo pet</h3>
+            <div className="mt-4 space-y-3">
+              <label className="block text-sm font-semibold text-slate-700">
+                Tutor
+                <select
+                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold"
+                  value={clientId}
+                  onChange={(e) => setClientId(e.target.value)}
+                >
+                  <option value="">Selecione…</option>
+                  {(clientsQ.data ?? []).map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Input label="Nome do pet" value={name} onChange={(e) => setName(e.target.value)} />
+              <Input label="Espécie" value={species} onChange={(e) => setSpecies(e.target.value)} placeholder="Cão, gato…" />
+              <Input label="Raça" value={breed} onChange={(e) => setBreed(e.target.value)} />
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                loading={createM.isPending}
+                onClick={() => {
+                  if (!clientId || !name.trim()) {
+                    toast.error('Selecione o tutor e informe o nome do pet.')
+                    return
+                  }
+                  createM.mutate()
+                }}
+              >
+                Salvar
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -43,6 +43,12 @@ export async function fetchOpenAiInsights(clinicId: string, limit = 8): Promise<
   return rows.slice(0, limit)
 }
 
+export async function updateAiInsightStatus(id: string, status: 'open' | 'dismissed' | 'resolved'): Promise<void> {
+  if (!supabase) throw new Error('Supabase não configurado')
+  const { error } = await supabase.from('ai_insights').update({ status }).eq('id', id)
+  if (error) throw error
+}
+
 export async function loadDashboardMetrics(
   clinicId: string,
   period: DashboardPeriod,
