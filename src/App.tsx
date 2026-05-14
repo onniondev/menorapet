@@ -21,6 +21,7 @@ import Financeiro from './pages/Financeiro'
 import PacienteDetalhe from './pages/PacienteDetalhe'
 import Pacientes from './pages/Pacientes'
 import PublicHome from './pages/PublicHome'
+import PlaceholderModulePage from './pages/PlaceholderModulePage'
 
 function RedirectPacienteToPet() {
   const { id } = useParams()
@@ -51,6 +52,9 @@ export default function App() {
                 <Route path="central-ia" element={<CentralIA />} />
                 <Route path="agenda" element={<Agenda />} />
                 <Route path="clientes" element={<ClientesPage />} />
+                <Route path="lembretes" element={<PlaceholderModulePage title="Lembretes" />} />
+                <Route path="estoque" element={<PlaceholderModulePage title="Estoque" />} />
+                <Route path="relatorios" element={<PlaceholderModulePage title="Relatórios" />} />
                 <Route path="pets" element={<Pacientes />} />
                 <Route path="pets/:id" element={<PacienteDetalhe />} />
                 <Route path="pacientes" element={<Navigate to="/app/pets" replace />} />

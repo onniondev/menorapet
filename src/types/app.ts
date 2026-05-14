@@ -11,6 +11,8 @@ export type Profile = {
 export type Clinic = {
   id: string
   name: string
+  /** Plano comercial exibido no dashboard (coluna opcional no Supabase). */
+  plan?: string | null
   slug: string
   phone: string | null
   whatsapp_number: string | null

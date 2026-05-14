@@ -8,14 +8,17 @@ import { IconButton } from '../ui/IconButton'
 import { Input } from '../ui/Input'
 
 const titles: Record<string, string> = {
-  '/app/dashboard': 'Visão geral',
-  '/app/conversas': 'Central de conversas',
+  '/app/dashboard': 'Dashboard',
+  '/app/conversas': 'Conversas',
   '/app/central-ia': 'Central IA',
-  '/app/agenda': 'Agenda inteligente',
+  '/app/agenda': 'Agenda',
   '/app/clientes': 'Clientes',
   '/app/pets': 'Pets',
-  '/app/automacoes': 'Automações',
+  '/app/lembretes': 'Lembretes',
   '/app/financeiro': 'Financeiro',
+  '/app/estoque': 'Estoque',
+  '/app/relatorios': 'Relatórios',
+  '/app/automacoes': 'Automações',
   '/app/equipe': 'Equipe',
   '/app/configuracoes': 'Configurações',
 }
@@ -55,7 +58,7 @@ export function AppShell() {
 
         <div className="flex min-w-0 flex-1 flex-col lg:py-6 lg:pr-6 lg:pl-4">
           <header className="sticky top-0 z-30 px-4 pb-3 pt-4 lg:px-2 lg:pt-0">
-            <div className="mx-auto flex w-full max-w-6xl items-center gap-3 rounded-3xl border border-white/60 bg-white/55 px-3 py-2.5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] backdrop-blur-2xl ring-1 ring-white/70 dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_16px_55px_rgba(0,0,0,0.45)] dark:ring-white/5">
+            <div className="mx-auto flex w-full max-w-7xl items-center gap-3 rounded-3xl border border-white/60 bg-white/55 px-3 py-2.5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] backdrop-blur-2xl ring-1 ring-white/70 dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_16px_55px_rgba(0,0,0,0.45)] dark:ring-white/5">
               <IconButton label="Abrir menu" className="lg:hidden" onClick={() => setOpen(true)}>
                 <Menu className="h-5 w-5" />
               </IconButton>
@@ -67,8 +70,8 @@ export function AppShell() {
                 </div>
               </div>
 
-              <div className="hidden w-[min(44vw,320px)] md:block">
-                <Input placeholder="Buscar…" className="min-h-10 py-2" left={<Search className="h-4 w-4" />} />
+              <div className="hidden w-[min(44vw,360px)] md:block">
+                <Input placeholder="Buscar cliente, pet, atendimento…" className="min-h-10 py-2" left={<Search className="h-4 w-4" />} />
               </div>
 
               <IconButton label="Notificações" className="hidden sm:inline-flex">
@@ -84,7 +87,7 @@ export function AppShell() {
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-2 lg:px-2 lg:pb-8">
+          <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-2 lg:px-2 lg:pb-8">
             <Outlet />
           </main>
 
