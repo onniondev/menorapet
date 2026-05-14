@@ -14,11 +14,10 @@ import {
   Sparkles,
   Star,
   Stethoscope,
-  Syringe,
   UserRound,
   Users,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import {
@@ -232,6 +231,8 @@ export default function Dashboard() {
               title="Atendimentos hoje"
               value={String(m.appointmentsToday)}
               hint={m.appointmentsTodayDeltaPct != null ? `${m.appointmentsTodayDeltaPct >= 0 ? '+' : ''}${m.appointmentsTodayDeltaPct}% vs ontem` : 'Sem base de ontem'}
+              actionLabel="Ver agenda"
+              onAction={() => navigate('/app/agenda')}
               icon={<CalendarDays className="h-5 w-5 text-brand-purple" />}
               accent="purple"
             />
@@ -248,6 +249,8 @@ export default function Dashboard() {
               title="Retornos agendados"
               value={String(m.retornosProximos7d)}
               hint="Próximos 7 dias"
+              actionLabel="Abrir agenda"
+              onAction={() => navigate('/app/agenda')}
               icon={<Stethoscope className="h-5 w-5 text-brand-teal" />}
               accent="teal"
             />
@@ -255,6 +258,8 @@ export default function Dashboard() {
               title="Faturamento do mês"
               value={formatBRLFromCents(m.revenueMonthCents)}
               hint={m.revenueMonthDeltaPct != null ? `${m.revenueMonthDeltaPct >= 0 ? '+' : ''}${m.revenueMonthDeltaPct}% vs mês passado` : 'Sem base mês passado'}
+              actionLabel="Ver financeiro"
+              onAction={() => navigate('/app/financeiro')}
               icon={<DollarSign className="h-5 w-5 text-brand-purple" />}
               accent="purple"
             />
@@ -262,6 +267,8 @@ export default function Dashboard() {
               title="Clientes ativos"
               value={String(m.activeClients90d)}
               hint="Com consulta ou mensagem (90 dias)"
+              actionLabel="Ver clientes"
+              onAction={() => navigate('/app/clientes')}
               icon={<Users className="h-5 w-5 text-brand-blue" />}
               accent="blue"
             />
@@ -377,7 +384,7 @@ export default function Dashboard() {
               title="Clientes inativos"
               value={String(m.inactiveClients90d)}
               hint="Sem consulta nos últimos 90 dias"
-              actionLabel="Reativar clientes"
+              actionLabel="Abrir clientes"
               onAction={() => navigate('/app/clientes')}
               icon={<UserRound className="h-4 w-4 text-brand-blue" />}
             />
@@ -385,6 +392,8 @@ export default function Dashboard() {
               title="Ticket médio"
               value={m.avgTicketCents != null ? formatBRLFromCents(m.avgTicketCents) : '—'}
               hint="Pagamentos pagos no mês"
+              actionLabel="Ver financeiro"
+              onAction={() => navigate('/app/financeiro')}
               icon={<DollarSign className="h-4 w-4 text-brand-purple" />}
             />
           </div>
@@ -427,8 +436,8 @@ export default function Dashboard() {
                           key={a.id}
                           a={a}
                           onChat={() => navigate('/app/conversas')}
-                          onEdit={() => toast.info('Edição de consulta em breve.')}
-                          onMore={() => toast.info('Mais opções em breve.')}
+                          onEdit={() => navigate('/app/agenda')}
+                          onMore={() => navigate('/app/busca')}
                         />
                       ))
                     )}
@@ -510,12 +519,14 @@ export default function Dashboard() {
               </Card>
 
               <Card padding="lg" className="border-[#E2E8F0] bg-white shadow-sm">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-extrabold tracking-tight">Lembretes de hoje</h2>
                     <p className="mt-1 text-sm font-medium text-[#64748B]">Operação do dia</p>
                   </div>
-                  <Syringe className="h-5 w-5 text-brand-teal" />
+                  <Button type="button" variant="outline" size="sm" onClick={() => navigate('/app/lembretes')}>
+                    Ver todos
+                  </Button>
                 </div>
 
                 <div className="mt-4 space-y-3">
@@ -624,8 +635,29 @@ function KpiCard({
           ? 'from-brand-teal/15 to-brand-blue/10'
           : 'from-orange-500/15 to-amber-500/10'
 
+  const interactive = Boolean(onAction)
+  const a11yProps = interactive
+    ? {
+        role: 'button' as const,
+        tabIndex: 0 as const,
+        onClick: () => onAction?.(),
+        onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onAction?.()
+          }
+        },
+      }
+    : {}
+
   return (
-    <Card padding="md" className="relative overflow-hidden border-[#E2E8F0] bg-white shadow-sm">
+    <Card
+      padding="md"
+      className={`relative overflow-hidden border-[#E2E8F0] bg-white shadow-sm ${
+        interactive ? 'cursor-pointer transition hover:border-brand-purple/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/35' : ''
+      }`}
+      {...a11yProps}
+    >
       <div className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gradient-to-br ${ring} opacity-70 blur-2xl`} />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -633,9 +665,7 @@ function KpiCard({
           <div className="mt-2 text-2xl font-black tracking-tight">{value}</div>
           <div className="mt-1 text-[11px] font-semibold text-[#64748B]">{hint}</div>
           {actionLabel && onAction ? (
-            <button type="button" onClick={onAction} className="mt-3 text-xs font-extrabold text-brand-purple hover:underline">
-              {actionLabel}
-            </button>
+            <div className="mt-3 text-xs font-extrabold text-brand-purple">{actionLabel} →</div>
           ) : null}
         </div>
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F8FAFC] ring-1 ring-[#E2E8F0]">{icon}</div>
@@ -659,17 +689,36 @@ function MiniStat({
   actionLabel?: string
   onAction?: () => void
 }) {
+  const interactive = Boolean(onAction)
+  const a11yProps = interactive
+    ? {
+        role: 'button' as const,
+        tabIndex: 0 as const,
+        onClick: () => onAction?.(),
+        onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onAction?.()
+          }
+        },
+      }
+    : {}
+
   return (
-    <Card padding="md" className="border-[#E2E8F0] bg-white shadow-sm">
+    <Card
+      padding="md"
+      className={`border-[#E2E8F0] bg-white shadow-sm ${
+        interactive ? 'cursor-pointer transition hover:border-brand-purple/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/35' : ''
+      }`}
+      {...a11yProps}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-xs font-extrabold text-[#64748B]">{title}</div>
           <div className="mt-2 text-xl font-black tracking-tight">{value}</div>
           <div className="mt-1 text-[11px] font-semibold text-[#64748B]">{hint}</div>
           {actionLabel && onAction ? (
-            <button type="button" onClick={onAction} className="mt-3 text-xs font-extrabold text-brand-purple hover:underline">
-              {actionLabel}
-            </button>
+            <div className="mt-3 text-xs font-extrabold text-brand-purple">{actionLabel} →</div>
           ) : null}
         </div>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#F8FAFC] ring-1 ring-[#E2E8F0]">{icon}</div>

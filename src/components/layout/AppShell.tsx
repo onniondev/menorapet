@@ -58,11 +58,11 @@ export function AppShell() {
           <div className="fixed inset-0 z-50 lg:hidden">
             <button
               type="button"
-              className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"
+              className="absolute inset-0 z-0 bg-slate-950/55 backdrop-blur-sm"
               aria-label="Fechar menu"
               onClick={() => setOpen(false)}
             />
-            <div className="absolute left-4 top-4 bottom-4 w-[min(88vw,320px)]">
+            <div className="absolute left-4 top-4 bottom-4 z-10 w-[min(88vw,320px)]">
               <Sidebar onNavigate={() => setOpen(false)} />
             </div>
           </div>
