@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { PetviaLogo } from '../PetviaLogo'
+import { LogoPetVia } from '../petvia/LogoPetVia'
 
 export function IaOrbAvatar({ size = 72 }: { size?: number }) {
   return (
@@ -20,7 +20,7 @@ export function IaOrbAvatar({ size = 72 }: { size?: number }) {
         transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <div className="absolute inset-0 flex items-center justify-center">
-        <PetviaLogo size={Math.round(size * 0.62)} />
+        <LogoPetVia size={Math.round(size * 0.62)} />
       </div>
     </div>
   )

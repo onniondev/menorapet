@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { SupabaseEnvBanner } from '../../components/auth/SupabaseEnvBanner'
+import { LogoPetVia } from '../../components/petvia/LogoPetVia'
 import { useAuth } from '../../context/AuthContext'
-import { PetviaLogo } from '../../components/PetviaLogo'
 import { ThemeToggle } from '../../components/layout/ThemeToggle'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -35,9 +35,8 @@ export default function RegisterPage() {
       <div className="pointer-events-none absolute inset-0 petvia-mesh opacity-90" />
       <div className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4 py-10">
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <PetviaLogo size={48} />
-            <div className="text-lg font-extrabold">Petvia IA</div>
+          <div className="flex min-w-0 items-center gap-3">
+            <LogoPetVia size={44} withWordmark />
           </div>
           <ThemeToggle />
         </div>
@@ -45,8 +44,10 @@ export default function RegisterPage() {
         <SupabaseEnvBanner />
 
         <Card padding="lg">
-          <h1 className="text-xl font-extrabold tracking-tight">Criar conta</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Comece com sua clínica em minutos</p>
+          <h1 className="text-xl font-extrabold tracking-tight">Criar conta na PetVia</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            Sua clínica veterinária no automático. Comece em minutos.
+          </p>
 
           <form className="mt-6 space-y-4" onSubmit={onSubmit}>
             <Input

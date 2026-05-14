@@ -27,7 +27,7 @@ export function AppShell() {
 
   const title = useMemo(() => {
     if (pathname.startsWith('/app/pets/') && pathname !== '/app/pets') return 'Perfil do pet'
-    return titles[pathname] ?? 'Petvia IA'
+    return titles[pathname] ?? 'PetVia'
   }, [pathname])
 
   return (
@@ -63,7 +63,7 @@ export function AppShell() {
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-extrabold tracking-tight">{title}</div>
                 <div className="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                  {clinic?.name ?? 'Clínica'} · Petvia IA
+                  {clinic?.name ?? 'Clínica'} · PetVia
                 </div>
               </div>
 

@@ -15,7 +15,7 @@ import {
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { Button } from '../ui/Button'
-import { PetviaLogo } from '../PetviaLogo'
+import { LogoPetVia } from '../petvia/LogoPetVia'
 
 const items = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -36,11 +36,11 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <aside className="flex h-[calc(100dvh-3rem)] w-[min(18rem,92vw)] shrink-0 flex-col overflow-hidden rounded-3xl border border-white/60 bg-white/55 p-4 shadow-[0_18px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl ring-1 ring-white/70 dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_18px_70px_rgba(0,0,0,0.55)] dark:ring-white/5">
       <div className="flex items-center gap-3 px-1">
-        <PetviaLogo size={44} />
+        <LogoPetVia size={44} />
         <div className="min-w-0 leading-tight">
-          <div className="truncate text-base font-extrabold tracking-tight text-ink dark:text-white">Petvia</div>
-          <div className="bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-xs font-semibold text-transparent">
-            IA para clínicas
+          <div className="truncate text-base font-extrabold tracking-tight text-ink dark:text-white">PetVia</div>
+          <div className="truncate bg-gradient-to-r from-brand-purple to-brand-teal bg-clip-text text-xs font-semibold text-transparent">
+            No automático
           </div>
         </div>
       </div>

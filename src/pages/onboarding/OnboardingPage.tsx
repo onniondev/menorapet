@@ -11,6 +11,7 @@ import { useClinicStore } from '../../stores/clinicStore'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { Input } from '../../components/ui/Input'
+import { LogoPetVia } from '../../components/petvia/LogoPetVia'
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
@@ -75,8 +76,9 @@ export default function OnboardingPage() {
     <div className="relative min-h-dvh overflow-hidden bg-surface petvia-mesh px-4 py-10 text-ink dark:bg-slate-950 dark:text-slate-100">
       <div className="pointer-events-none absolute inset-0 petvia-noise opacity-35 dark:opacity-20" />
       <div className="relative z-10 mx-auto max-w-xl">
-        <div className="mb-6 text-center">
-          <div className="text-sm font-semibold text-slate-500">Onboarding · passo {step} de 3</div>
+        <div className="mb-6 flex flex-col items-center text-center">
+          <LogoPetVia size={48} withWordmark />
+          <div className="mt-3 text-sm font-semibold text-slate-500">Onboarding · passo {step} de 3</div>
           <h1 className="mt-2 text-2xl font-extrabold tracking-tight">Configure sua clínica</h1>
         </div>
 

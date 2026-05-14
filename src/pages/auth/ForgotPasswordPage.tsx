@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { SupabaseEnvBanner } from '../../components/auth/SupabaseEnvBanner'
+import { LogoPetVia } from '../../components/petvia/LogoPetVia'
 import { useAuth } from '../../context/AuthContext'
-import { PetviaLogo } from '../../components/PetviaLogo'
 import { ThemeToggle } from '../../components/layout/ThemeToggle'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -32,8 +32,8 @@ export default function ForgotPasswordPage() {
     <div className="relative min-h-dvh overflow-hidden bg-surface text-ink dark:bg-slate-950 dark:text-slate-100">
       <div className="pointer-events-none absolute inset-0 petvia-mesh opacity-90" />
       <div className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-4 py-10">
-        <div className="mb-6 flex items-center justify-between">
-          <PetviaLogo size={44} />
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <LogoPetVia size={42} withWordmark />
           <ThemeToggle />
         </div>
 
@@ -62,6 +62,11 @@ export default function ForgotPasswordPage() {
               Enviar link
             </Button>
           </form>
+          <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
+            <Link to="/" className="font-medium hover:text-brand-purple hover:underline dark:hover:text-brand-teal">
+              ← Início
+            </Link>
+          </p>
         </Card>
       </div>
     </div>
