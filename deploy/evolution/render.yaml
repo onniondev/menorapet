@@ -1,6 +1,7 @@
-# Deploy Evolution API na Render (URL pública para a Vercel)
-# https://render.com → New → Blueprint → conecte este repositório
-# Depois copie a URL do serviço para EVOLUTION_API_URL na Vercel.
+# Blueprint Render — Evolution API para PetVia (sem PC)
+# New → Blueprint → repo menorapet → path: deploy/evolution/render.yaml
+#
+# Depois do deploy: defina SERVER_URL = https://<nome-do-servico>.onrender.com
 
 services:
   - type: web
@@ -17,8 +18,11 @@ services:
         value: http
       - key: SERVER_PORT
         value: '8080'
+      # Obrigatório após o 1º deploy: URL pública com https (painel Render → Environment)
       - key: SERVER_URL
         sync: false
+      - key: DEL_INSTANCE
+        value: 'false'
       - key: DATABASE_ENABLED
         value: 'true'
       - key: DATABASE_PROVIDER
@@ -29,6 +33,16 @@ services:
           property: connectionString
       - key: DATABASE_CONNECTION_CLIENT_NAME
         value: petvia_evolution
+      - key: DATABASE_SAVE_DATA_INSTANCE
+        value: 'true'
+      - key: DATABASE_SAVE_DATA_NEW_MESSAGE
+        value: 'true'
+      - key: DATABASE_SAVE_MESSAGE_UPDATE
+        value: 'true'
+      - key: DATABASE_SAVE_DATA_CONTACTS
+        value: 'true'
+      - key: DATABASE_SAVE_DATA_CHATS
+        value: 'true'
       - key: CACHE_REDIS_ENABLED
         value: 'false'
       - key: CACHE_LOCAL_ENABLED
@@ -37,6 +51,10 @@ services:
         value: ERROR,WARN
       - key: CORS_ORIGIN
         value: '*'
+      - key: CORS_METHODS
+        value: GET,POST,PUT,DELETE
+      - key: CORS_CREDENTIALS
+        value: 'true'
       - key: CONFIG_SESSION_PHONE_CLIENT
         value: Chrome
 

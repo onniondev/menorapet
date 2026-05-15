@@ -19,6 +19,7 @@
     "evolution:down": "docker compose -f docker-compose.evolution.yml down",
     "evolution:logs": "docker logs -f petvia-evolution-api",
     "evolution:status": "docker compose -f docker-compose.evolution.yml ps",
+    "evolution:webhook-secret": "node scripts/generate-webhook-secret.mjs",
     "dev:api": "vercel dev",
     "dev:full": "npm run evolution:up && vercel dev"
   },

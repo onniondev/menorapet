@@ -19,6 +19,12 @@ No frontend (opcional, deploy na mesma origem):
 VITE_API_BASE_URL=
 ```
 
+## Produção 100% nuvem (sem PC)
+
+**Guia completo:** [evolution-nuvem.md](./evolution-nuvem.md) — Render Blueprint + variáveis na Vercel.
+
+Resumo: PetVia na Vercel + Evolution na Render/Railway + Supabase.
+
 ## Produção (Vercel) — URL pública obrigatória
 
 A Vercel **não** alcança `http://localhost:8080`. Você precisa hospedar a Evolution com HTTPS/HTTP público.

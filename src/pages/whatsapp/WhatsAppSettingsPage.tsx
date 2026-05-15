@@ -148,19 +148,27 @@ export default function WhatsAppSettingsPage() {
               {statusQ.data.evolutionError ?? 'fetch failed'}. O app em produção não alcança{' '}
               <code className="text-xs">localhost</code>.
             </p>
-            <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs leading-relaxed">
-              <li>Suba a Evolution em um servidor com URL pública (VPS, Railway, Render).</li>
-              <li>
-                Na Vercel, defina <code>EVOLUTION_API_URL=https://sua-evolution.com</code>,{' '}
-                <code>EVOLUTION_API_KEY</code>, <code>EVOLUTION_WEBHOOK_SECRET</code> e{' '}
-                <code>APP_URL=https://menorapet.vercel.app</code>.
-              </li>
-              <li>Redeploy e clique em Reconectar.</li>
-            </ol>
-            <p className="mt-2 text-xs opacity-80">
-              Desenvolvimento local: <code>docker compose -f docker-compose.evolution.yml up -d</code> +{' '}
-              <code>npm run dev:api</code> (mesma máquina).
+            <p className="mt-2 text-xs leading-relaxed">
+              Seu app já está online na Vercel — você <strong>não precisa do PC</strong>. Hospede a Evolution na{' '}
+              <strong>Render</strong> ou <strong>Railway</strong> (guia no repositório:{' '}
+              <code className="rounded bg-amber-200/50 px-1 dark:bg-amber-900/50">docs/evolution-nuvem.md</code>
+              ).
             </p>
+            <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs leading-relaxed">
+              <li>
+                Render: New → Blueprint → repo menorapet → path{' '}
+                <code>deploy/evolution/render.yaml</code>
+              </li>
+              <li>
+                Defina <code>SERVER_URL</code> na Render = URL pública (https://…onrender.com).
+              </li>
+              <li>
+                Na Vercel: <code>EVOLUTION_API_URL</code> (mesma URL), <code>EVOLUTION_API_KEY</code> (= chave da
+                Render), <code>EVOLUTION_WEBHOOK_SECRET</code> (<code>npm run evolution:webhook-secret</code>),{' '}
+                <code>APP_URL=https://menorapet.vercel.app</code>
+              </li>
+              <li>Redeploy Vercel → Reconectar aqui.</li>
+            </ol>
           </motion.div>
         ) : null}
       </Card>
