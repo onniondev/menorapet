@@ -1,0 +1,47 @@
+# Deploy Evolution API na Render (URL pública para a Vercel)
+# https://render.com → New → Blueprint → conecte este repositório
+# Depois copie a URL do serviço para EVOLUTION_API_URL na Vercel.
+
+services:
+  - type: web
+    name: petvia-evolution-api
+    runtime: image
+    image:
+      url: docker.io/atendai/evolution-api:v2.2.3
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: AUTHENTICATION_API_KEY
+        generateValue: true
+      - key: SERVER_TYPE
+        value: http
+      - key: SERVER_PORT
+        value: '8080'
+      - key: SERVER_URL
+        sync: false
+      - key: DATABASE_ENABLED
+        value: 'true'
+      - key: DATABASE_PROVIDER
+        value: postgresql
+      - key: DATABASE_CONNECTION_URI
+        fromDatabase:
+          name: petvia-evolution-db
+          property: connectionString
+      - key: DATABASE_CONNECTION_CLIENT_NAME
+        value: petvia_evolution
+      - key: CACHE_REDIS_ENABLED
+        value: 'false'
+      - key: CACHE_LOCAL_ENABLED
+        value: 'true'
+      - key: LOG_LEVEL
+        value: ERROR,WARN
+      - key: CORS_ORIGIN
+        value: '*'
+      - key: CONFIG_SESSION_PHONE_CLIENT
+        value: Chrome
+
+databases:
+  - name: petvia-evolution-db
+    plan: free
+    databaseName: evolution
+    user: evolution

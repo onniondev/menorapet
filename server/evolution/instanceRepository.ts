@@ -78,18 +78,39 @@ export async function connectClinicWhatsApp(clinicId: string, displayName?: stri
   const record = await getOrCreateInstanceRecord(clinicId, displayName)
   const instanceName = record.instance_name
 
-  await evolution.createInstance(clinicId, displayName).catch(() => {})
-  await setWebhook(instanceName)
+  const createRes = await evolution.createInstance(clinicId, displayName)
+  if (!createRes.ok && ![403, 409].includes(createRes.status)) {
+    throw new Error(createRes.error)
+  }
+
+  const webhookRes = await setWebhook(instanceName)
+  if (!webhookRes.ok) {
+    throw new Error(webhookRes.error)
+  }
 
   const connectRes = await evolution.connectInstance(instanceName)
-  const qr = connectRes.ok ? extractQrFromConnect(connectRes.data) : null
+  if (!connectRes.ok) {
+    throw new Error(connectRes.error)
+  }
+
+  const qr = extractQrFromConnect(connectRes.data)
 
   await updateInstance(record.id, {
     status: qr ? 'qrcode' : 'connecting',
     qr_code: qr,
   })
 
-  return { instance: record, qrCode: qr, status: qr ? 'qrcode' : 'connecting' }
+  const { rows } = await query<InstanceRow>(
+    `select id, clinic_id, provider, instance_name, display_name, phone_number, status, qr_code, last_connected_at::text
+     from public.whatsapp_instances where id = $1`,
+    [record.id],
+  )
+
+  return {
+    instance: rows[0] ?? record,
+    qrCode: qr,
+    status: qr ? 'qrcode' : 'connecting',
+  }
 }
 
 export async function syncClinicWhatsAppStatus(clinicId: string) {
@@ -140,9 +161,15 @@ export async function syncClinicWhatsAppStatus(clinicId: string) {
      from public.whatsapp_instances where id = $1`,
     [record.id],
   )
+  const row = updated[0] ?? record
+  let status = row.status
+  if (!evolutionReachable && row.qr_code && (status === 'connecting' || status === 'disconnected')) {
+    status = 'qrcode'
+  }
+
   return {
-    status: updated[0]?.status ?? record.status,
-    instance: updated[0] ?? record,
+    status,
+    instance: row,
     evolutionReachable,
     evolutionError,
   }

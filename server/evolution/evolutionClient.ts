@@ -4,16 +4,34 @@ export type EvolutionResult<T = unknown> =
 
 const TIMEOUT_MS = 30_000
 
+export function getEvolutionConfigError(): string | null {
+  const base = (process.env.EVOLUTION_API_URL ?? '').trim()
+  const key = (process.env.EVOLUTION_API_KEY ?? '').trim()
+  if (!base || !key) {
+    return 'Configure EVOLUTION_API_URL e EVOLUTION_API_KEY na Vercel (Settings → Environment Variables).'
+  }
+  try {
+    const host = new URL(base).hostname.toLowerCase()
+    if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host.endsWith('.local')) {
+      return 'EVOLUTION_API_URL não pode ser localhost na Vercel. Suba a Evolution em um servidor com URL pública (VPS, Railway, etc.) e use essa URL.'
+    }
+  } catch {
+    return 'EVOLUTION_API_URL inválida.'
+  }
+  return null
+}
+
 export async function requestEvolution<T = unknown>(
   method: string,
   path: string,
   body?: unknown,
 ): Promise<EvolutionResult<T>> {
+  const configErr = getEvolutionConfigError()
+  if (configErr) {
+    return { ok: false, error: configErr, status: 503 }
+  }
   const base = (process.env.EVOLUTION_API_URL ?? '').replace(/\/$/, '')
   const key = process.env.EVOLUTION_API_KEY ?? ''
-  if (!base || !key) {
-    return { ok: false, error: 'EVOLUTION_API_URL ou EVOLUTION_API_KEY não configurados', status: 503 }
-  }
 
   const url = `${base}${path.startsWith('/') ? path : `/${path}`}`
   try {

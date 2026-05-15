@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -136,11 +137,31 @@ export default function WhatsAppSettingsPage() {
         {statusQ.isError ? (
           <p className="text-sm text-red-600">{(statusQ.error as Error).message}</p>
         ) : null}
-        {statusQ.data?.evolutionError && !statusQ.isError ? (
-          <p className="text-sm text-amber-700 dark:text-amber-300">
-            Evolution API inacessível da Vercel ({statusQ.data.evolutionError}). Use URL pública da Evolution, não
-            localhost — ou teste com <code className="text-xs">vercel dev</code> no PC.
-          </p>
+        {statusQ.data?.evolutionReachable === false && !statusQ.isError ? (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl border border-amber-300/60 bg-amber-50/80 p-4 text-sm text-amber-950 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-100"
+          >
+            <p className="font-semibold">Evolution API inacessível da Vercel</p>
+            <p className="mt-1 text-amber-900/90 dark:text-amber-100/90">
+              {statusQ.data.evolutionError ?? 'fetch failed'}. O app em produção não alcança{' '}
+              <code className="text-xs">localhost</code>.
+            </p>
+            <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs leading-relaxed">
+              <li>Suba a Evolution em um servidor com URL pública (VPS, Railway, Render).</li>
+              <li>
+                Na Vercel, defina <code>EVOLUTION_API_URL=https://sua-evolution.com</code>,{' '}
+                <code>EVOLUTION_API_KEY</code>, <code>EVOLUTION_WEBHOOK_SECRET</code> e{' '}
+                <code>APP_URL=https://menorapet.vercel.app</code>.
+              </li>
+              <li>Redeploy e clique em Reconectar.</li>
+            </ol>
+            <p className="mt-2 text-xs opacity-80">
+              Desenvolvimento local: <code>docker compose -f docker-compose.evolution.yml up -d</code> +{' '}
+              <code>npm run dev:api</code> (mesma máquina).
+            </p>
+          </motion.div>
         ) : null}
       </Card>
     </div>

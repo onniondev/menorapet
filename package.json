@@ -14,7 +14,13 @@
     "db:migrate-whatsapp": "node scripts/run-sql-file.mjs supabase/migrations/20260315120000_whatsapp_meta.sql",
     "db:migrate-whatsapp-evolution": "node scripts/run-sql-file.mjs supabase/migrations/20260320120000_whatsapp_evolution.sql",
     "db:migrate-whatsapp-all": "node scripts/apply-whatsapp-migrations.mjs",
-    "dev:api": "vercel dev"
+    "evolution:setup": "node scripts/setup-evolution.mjs",
+    "evolution:up": "node scripts/evolution-up.mjs",
+    "evolution:down": "docker compose -f docker-compose.evolution.yml down",
+    "evolution:logs": "docker logs -f petvia-evolution-api",
+    "evolution:status": "docker compose -f docker-compose.evolution.yml ps",
+    "dev:api": "vercel dev",
+    "dev:full": "npm run evolution:up && vercel dev"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

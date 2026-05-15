@@ -1,17 +1,49 @@
+# Evolution API v2 + Postgres + Redis (PetVia)
+# Uso: npm run evolution:setup && npm run evolution:up
+
 services:
+  evolution-postgres:
+    image: postgres:16-alpine
+    container_name: petvia-evolution-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: evolution
+      POSTGRES_DB: evolution
+    volumes:
+      - evolution_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U evolution -d evolution']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  evolution-redis:
+    image: redis:7-alpine
+    container_name: petvia-evolution-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   evolution-api:
     image: atendai/evolution-api:v2.2.3
-    container_name: petvia-evolution
+    container_name: petvia-evolution-api
     restart: unless-stopped
+    depends_on:
+      evolution-postgres:
+        condition: service_healthy
+      evolution-redis:
+        condition: service_healthy
     ports:
       - '8080:8080'
     env_file:
       - .env.evolution
-    environment:
-      SERVER_URL: http://localhost:8080
-      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:-change-me}
     volumes:
       - evolution_instances:/evolution/instances
 
 volumes:
+  evolution_pg_data:
   evolution_instances:
