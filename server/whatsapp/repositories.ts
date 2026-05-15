@@ -1,5 +1,5 @@
-import { query } from '../db/pool.ts'
-import type { ClinicRow, ClientRow, ConversationRow, ConversationQueue, MessageRow } from '../types/whatsapp.ts'
+import { query } from '../db/pool'
+import type { ClinicRow, ClientRow, ConversationRow, ConversationQueue, MessageRow } from '../types/whatsapp'
 
 export async function resolveClinicByInstanceName(instanceName: string): Promise<ClinicRow | null> {
   const { rows } = await query<ClinicRow & { clinic_id: string }>(

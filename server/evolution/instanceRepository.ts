@@ -1,6 +1,6 @@
-import { query } from '../db/pool.ts'
-import * as evolution from './evolutionService.ts'
-import { buildInstanceName, extractQrFromConnect, mapEvolutionState, setWebhook } from './evolutionService.ts'
+import { query } from '../db/pool'
+import * as evolution from './evolutionService'
+import { buildInstanceName, extractQrFromConnect, mapEvolutionState, setWebhook } from './evolutionService'
 
 export type InstanceRow = {
   id: string

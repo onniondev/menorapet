@@ -1,4 +1,4 @@
-import type { IntentCategory, IntentLevel } from '../types/whatsapp.ts'
+import type { IntentCategory, IntentLevel } from '../types/whatsapp'
 
 const RULES: { intent: IntentCategory; patterns: RegExp[]; level: IntentLevel }[] = [
   { intent: 'emergency', level: 'urgent', patterns: [/sangue|convuls|não respira|dificuldade respirat|envenen|atropel|inconscien|morrendo|urgente|emergên/i] },

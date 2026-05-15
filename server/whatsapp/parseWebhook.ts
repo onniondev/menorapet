@@ -1,4 +1,4 @@
-import type { InboundWhatsAppMessage } from './inboundProcessor.ts'
+import type { InboundWhatsAppMessage } from './inboundProcessor'
 
 export type MetaWebhookPayload = {
   object?: string

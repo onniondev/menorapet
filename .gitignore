@@ -28,3 +28,5 @@ supabase/.temp/
 
 # Chaves SSH locais (nunca commitar)
 .keys/
+
+.vercel

@@ -68,6 +68,10 @@ export class WhatsAppCloudService {
     return { ok: true }
   }
 
+  async getStatus(): Promise<'connected' | 'disconnected' | 'connecting' | 'qrcode' | 'error'> {
+    return 'connected'
+  }
+
   async sendTemplateMessage(
     to: string,
     templateName: string,

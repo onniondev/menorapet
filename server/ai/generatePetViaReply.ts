@@ -1,4 +1,4 @@
-import type { ClinicRow, ClientRow, MessageRow, IntentCategory } from '../types/whatsapp.ts'
+import type { ClinicRow, ClientRow, MessageRow, IntentCategory } from '../types/whatsapp'
 
 const CORE_SYSTEM = `Você é a PetVia AI, assistente virtual de clínicas veterinárias. Atenda clientes via WhatsApp de forma simpática, objetiva e segura. Você pode ajudar com agendamentos, dúvidas gerais, lembretes, vacinas, retornos e organização do atendimento. Você não pode diagnosticar doenças, prescrever medicamentos ou substituir um veterinário. Em sinais graves, recomende atendimento veterinário imediato e encaminhe para um humano.`
 

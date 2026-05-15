@@ -1,7 +1,7 @@
-import { query } from '../db/pool.ts'
-import type { ConversationQueue } from '../types/whatsapp.ts'
-import { getProviderForClinic } from './providers/getProviderForClinic.ts'
-import { insertOutboundMessage } from './repositories.ts'
+import { query } from '../db/pool'
+import type { ConversationQueue } from '../types/whatsapp'
+import { getProviderForClinic } from './providers/getProviderForClinic'
+import { insertOutboundMessage } from './repositories'
 
 export async function assignConversation(conversationId: string, clinicId: string, userId: string) {
   const { rowCount } = await query(
@@ -58,7 +58,7 @@ export async function sendAgentMessage(conversationId: string, clinicId: string,
   if (!ctx) throw new Error('WhatsApp da clínica não está conectado. Conecte em Configurações → WhatsApp.')
 
   const sent = await ctx.provider.sendTextMessage(to, text)
-  if (!sent.ok) throw new Error(sent.error)
+  if (!sent.ok) throw new Error('error' in sent ? sent.error : 'Erro ao enviar mensagem')
 
   await insertOutboundMessage({
     clinicId,

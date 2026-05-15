@@ -1,9 +1,9 @@
-import { classifyIntent, intentLevel } from '../ai/classifyIntent.ts'
-import { generatePetViaReply } from '../ai/generatePetViaReply.ts'
-import { getFaqReply, getGroomingFaq } from '../ai/petvia-faq.ts'
-import { query } from '../db/pool.ts'
-import type { ClinicRow, ConversationQueue, ConversationRow } from '../types/whatsapp.ts'
-import type { WhatsAppProvider } from './providers/WhatsAppProvider.ts'
+import { classifyIntent, intentLevel } from '../ai/classifyIntent'
+import { generatePetViaReply } from '../ai/generatePetViaReply'
+import { getFaqReply, getGroomingFaq } from '../ai/petvia-faq'
+import { query } from '../db/pool'
+import type { ClinicRow, ConversationQueue, ConversationRow } from '../types/whatsapp'
+import type { WhatsAppProvider } from './providers/WhatsAppProvider'
 import {
   assignConversationHuman,
   createConversation,
@@ -16,7 +16,7 @@ import {
   insertOutboundMessage,
   logWebhook,
   upsertClientFromEvolution,
-} from './repositories.ts'
+} from './repositories'
 
 export type InboundCoreInput = {
   clinic: ClinicRow
@@ -145,7 +145,7 @@ export async function processInboundCore(input: InboundCoreInput): Promise<void>
   const to = client.whatsapp_jid ?? client.wa_id ?? phone
   const sent = await provider.sendTextMessage(to, replyText)
   if (!sent.ok) {
-    await logWebhook(clinic.id, 'send_failed', { error: sent.error, to })
+    await logWebhook(clinic.id, 'send_failed', { error: 'error' in sent ? sent.error : 'send failed', to })
     return
   }
 

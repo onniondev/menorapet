@@ -1,5 +1,5 @@
-import { WhatsAppCloudService } from '../WhatsAppCloudService.ts'
-import type { SendTextResult, WhatsAppConnectionState, WhatsAppProvider } from './WhatsAppProvider.ts'
+import { WhatsAppCloudService } from '../WhatsAppCloudService'
+import type { SendTextResult, WhatsAppConnectionState, WhatsAppProvider } from './WhatsAppProvider'
 
 /** Provider oficial Meta — uso futuro quando a clínica tiver `provider = meta_cloud`. */
 export class MetaCloudWhatsAppProvider implements WhatsAppProvider {

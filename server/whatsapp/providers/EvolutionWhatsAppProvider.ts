@@ -1,5 +1,5 @@
-import * as evolution from '../../evolution/evolutionService.ts'
-import type { SendTextResult, WhatsAppConnectionState, WhatsAppProvider } from './WhatsAppProvider.ts'
+import * as evolution from '../../evolution/evolutionService'
+import type { SendTextResult, WhatsAppConnectionState, WhatsAppProvider } from './WhatsAppProvider'
 
 export class EvolutionWhatsAppProvider implements WhatsAppProvider {
   readonly providerId = 'evolution' as const
@@ -8,14 +8,14 @@ export class EvolutionWhatsAppProvider implements WhatsAppProvider {
 
   async sendTextMessage(to: string, text: string): Promise<SendTextResult> {
     const res = await evolution.sendTextMessage(this.instanceName, to, text)
-    if (!res.ok) return { ok: false, error: res.error }
+    if (!res.ok) return { ok: false, error: 'error' in res ? res.error : 'Erro Evolution' }
     const id = (res.data as { key?: { id?: string } })?.key?.id ?? ''
     return { ok: true, messageId: id }
   }
 
   async sendMediaMessage(to: string, mediaUrl: string, caption?: string): Promise<SendTextResult> {
     const res = await evolution.sendMediaMessage(this.instanceName, to, mediaUrl, caption)
-    if (!res.ok) return { ok: false, error: res.error }
+    if (!res.ok) return { ok: false, error: 'error' in res ? res.error : 'Erro Evolution' }
     const id = (res.data as { key?: { id?: string } })?.key?.id ?? ''
     return { ok: true, messageId: id }
   }

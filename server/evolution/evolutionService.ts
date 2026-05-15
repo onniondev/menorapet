@@ -1,4 +1,4 @@
-import { appWebhookUrl, instanceNameForClinic, requestEvolution } from './evolutionClient.ts'
+import { appWebhookUrl, instanceNameForClinic, requestEvolution } from './evolutionClient'
 
 export function buildInstanceName(clinicId: string) {
   return instanceNameForClinic(clinicId)

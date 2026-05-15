@@ -1,6 +1,6 @@
-import { query } from '../../db/pool.ts'
-import { EvolutionWhatsAppProvider } from './EvolutionWhatsAppProvider.ts'
-import type { WhatsAppProvider } from './WhatsAppProvider.ts'
+import { query } from '../../db/pool'
+import { EvolutionWhatsAppProvider } from './EvolutionWhatsAppProvider'
+import type { WhatsAppProvider } from './WhatsAppProvider'
 
 export type WhatsAppInstanceRow = {
   id: string
@@ -36,7 +36,7 @@ export async function getProviderForClinic(clinicId: string): Promise<{ provider
     return { provider: new EvolutionWhatsAppProvider(instance.instance_name), instance }
   }
   if (instance.provider === 'meta_cloud') {
-    const { MetaCloudWhatsAppProvider } = await import('./MetaCloudWhatsAppProvider.ts')
+    const { MetaCloudWhatsAppProvider } = await import('./MetaCloudWhatsAppProvider')
     return { provider: new MetaCloudWhatsAppProvider(), instance }
   }
   return null

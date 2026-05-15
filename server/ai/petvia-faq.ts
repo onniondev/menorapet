@@ -12,6 +12,8 @@ export type FaqIntent =
   | 'emergency'
   | 'payment'
   | 'human_request'
+  | 'pet_history'
+  | 'unknown'
 
 export type FaqClinicInfo = {
   clinicName: string

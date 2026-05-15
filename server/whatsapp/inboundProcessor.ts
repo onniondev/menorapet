@@ -1,6 +1,6 @@
-import { WhatsAppCloudService } from './WhatsAppCloudService.ts'
-import { processInboundCore } from './processInboundCore.ts'
-import { logWebhook, resolveClinicByPhoneNumberId } from './repositories.ts'
+import { WhatsAppCloudService } from './WhatsAppCloudService'
+import { processInboundCore } from './processInboundCore'
+import { logWebhook, resolveClinicByPhoneNumberId } from './repositories'
 
 export type InboundWhatsAppMessage = {
   phoneNumberId: string

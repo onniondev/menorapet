@@ -1,8 +1,8 @@
-import { getInstanceByName } from './providers/getProviderForClinic.ts'
-import { EvolutionWhatsAppProvider } from './providers/EvolutionWhatsAppProvider.ts'
-import { processInboundCore } from './processInboundCore.ts'
-import { logWebhook, resolveClinicByInstanceName } from './repositories.ts'
-import type { EvolutionInboundMessage } from '../evolution/parseEvolutionWebhook.ts'
+import { getInstanceByName } from './providers/getProviderForClinic'
+import { EvolutionWhatsAppProvider } from './providers/EvolutionWhatsAppProvider'
+import { processInboundCore } from './processInboundCore'
+import { logWebhook, resolveClinicByInstanceName } from './repositories'
+import type { EvolutionInboundMessage } from '../evolution/parseEvolutionWebhook'
 
 export async function processEvolutionInboundMessage(msg: EvolutionInboundMessage): Promise<void> {
   const instance = await getInstanceByName(msg.instanceName)
