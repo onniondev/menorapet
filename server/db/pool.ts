@@ -18,24 +18,30 @@ function assertReachableFromServerless(url: string) {
   }
 }
 
-function normalizeDatabaseUrl(raw: string) {
+function parseDatabaseUrl(raw: string) {
   const url = raw.trim()
   assertReachableFromServerless(url)
   const parsed = new URL(url.replace(/^postgresql:\/\//, 'postgres://'))
   const params = new URLSearchParams(parsed.search)
-  if (!params.has('sslmode')) params.set('sslmode', 'require')
+  params.delete('sslmode')
+  params.delete('ssl')
   if (parsed.port === '6543' && !params.has('pgbouncer')) params.set('pgbouncer', 'true')
   parsed.search = params.toString() ? `?${params.toString()}` : ''
-  return parsed.toString().replace(/^postgres:\/\//, 'postgresql://')
+  const connectionString = parsed.toString().replace(/^postgres:\/\//, 'postgresql://')
+  const useSupabaseSsl =
+    /\.supabase\.co$/i.test(parsed.hostname) || /\.pooler\.supabase\.com$/i.test(parsed.hostname)
+  return { connectionString, useSupabaseSsl }
 }
 
 export function getPool(): pg.Pool {
   if (!pool) {
     const url = process.env.DATABASE_URL
     if (!url) throw new Error('DATABASE_URL não configurada')
+    const { connectionString, useSupabaseSsl } = parseDatabaseUrl(url)
     pool = new Pool({
-      connectionString: normalizeDatabaseUrl(url),
-      ssl: { rejectUnauthorized: false },
+      connectionString,
+      // sslmode na URL faz o pg validar o certificado e ignora rejectUnauthorized: false
+      ssl: useSupabaseSsl ? { rejectUnauthorized: false } : undefined,
       max: 3,
       idleTimeoutMillis: 10_000,
       connectionTimeoutMillis: 15_000,

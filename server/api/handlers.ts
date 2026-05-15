@@ -206,6 +206,13 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
         res.status(503).json({ error: msg })
         return
       }
+      if (/self-signed certificate/i.test(msg)) {
+        res.status(503).json({
+          error:
+            'Erro SSL ao conectar no Postgres. Remova sslmode da DATABASE_URL na Vercel (o servidor já configura SSL) ou use o Session pooler do Supabase.',
+        })
+        return
+      }
       if (/DATABASE_URL/i.test(msg) || /password authentication/i.test(msg) || /ENOTFOUND|ECONNREFUSED/i.test(msg)) {
         res.status(503).json({
           error:
