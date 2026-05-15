@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Activity, Bot, CheckCircle2, MessageCircle, RefreshCw, Sparkles, Wallet, XCircle } from 'lucide-react'
+import { WhatsAppConnectPrompt } from '../components/whatsapp/WhatsAppConnectPrompt'
 import { useEffect, useMemo, useState } from 'react'
 import { centralIaNodes, centralIaStats } from '../data/mock'
 import { Badge } from '../components/ui/Badge'
@@ -50,6 +51,8 @@ export default function CentralIA() {
 
   return (
     <div className="space-y-5">
+      {clinicId ? <WhatsAppConnectPrompt clinicId={clinicId} variant="hero" /> : null}
+
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="relative overflow-hidden lg:col-span-2" padding="lg">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-brand-purple/25 via-brand-blue/15 to-brand-teal/15 blur-3xl" />
@@ -165,7 +168,7 @@ export default function CentralIA() {
           </div>
           <div>
             <div className="text-sm font-extrabold">WhatsApp</div>
-            <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">Fila estável · respostas sugeridas prontas.</div>
+            <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">Vincular número · inbox e IA — toque para conectar</div>
           </div>
         </Card>
         <Card padding="sm" className="flex items-start gap-3">

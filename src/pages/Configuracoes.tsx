@@ -137,7 +137,7 @@ export default function Configuracoes() {
               </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" type="button" onClick={() => void navigate('/app/configuracoes/whatsapp')}>
+          <Button variant="outline" size="sm" type="button" onClick={() => void navigate('/app/whatsapp')}>
             Configurar WhatsApp
           </Button>
         </div>

@@ -11,6 +11,7 @@ import {
   Package,
   PawPrint,
   Settings2,
+  Smartphone,
   Sparkles,
   UserCircle2,
   Users,
@@ -31,6 +32,7 @@ type NavItem = { to: string; label: string; icon: LucideIcon; showUnreadBadge?: 
 const items: NavItem[] = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/app/conversas', label: 'Conversas', icon: MessageCircle, showUnreadBadge: true },
+  { to: '/app/whatsapp', label: 'WhatsApp', icon: Smartphone },
   { to: '/app/central-ia', label: 'Central IA', icon: Bot },
   { to: '/app/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/app/clientes', label: 'Clientes', icon: Users },

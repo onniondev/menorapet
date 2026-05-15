@@ -59,6 +59,8 @@ export default function App() {
                 <Route path="busca" element={<BuscaGlobalPage />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="conversas" element={<Conversas />} />
+                <Route path="whatsapp" element={<WhatsAppSettingsPage />} />
+                <Route path="configuracoes/whatsapp" element={<Navigate to="/app/whatsapp" replace />} />
                 <Route path="central-ia" element={<CentralIA />} />
                 <Route path="agenda" element={<Agenda />} />
                 <Route path="clientes" element={<ClientesPage />} />

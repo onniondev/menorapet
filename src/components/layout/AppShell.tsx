@@ -10,6 +10,7 @@ import { Input } from '../ui/Input'
 const titles: Record<string, string> = {
   '/app/dashboard': 'Dashboard',
   '/app/conversas': 'Conversas',
+  '/app/whatsapp': 'WhatsApp',
   '/app/central-ia': 'Central IA',
   '/app/agenda': 'Agenda',
   '/app/clientes': 'Clientes',

@@ -11,6 +11,8 @@ import { useClinicContext } from '../hooks/useClinicContext'
 import { isSupabaseConfigured } from '../lib/supabase'
 import * as messageThreadService from '../services/messageThreadService'
 import * as waApi from '../services/whatsappConversationApi'
+import { WhatsAppConnectPrompt } from '../components/whatsapp/WhatsAppConnectPrompt'
+import { useWhatsAppConnection } from '../hooks/useWhatsAppConnection'
 
 export default function Conversas() {
   const { clinicId } = useClinicContext()
@@ -20,6 +22,7 @@ export default function Conversas() {
   const [q, setQ] = useState('')
   const [draft, setDraft] = useState('')
   const [onlyUnassigned, setOnlyUnassigned] = useState(false)
+  const { isConnected } = useWhatsAppConnection(clinicId)
 
   const inboxQ = useQuery({
     queryKey: ['wa-inbox', clinicId, q, onlyUnassigned],
@@ -113,8 +116,21 @@ export default function Conversas() {
   }
   if (!clinicId) return null
 
+  if (!isConnected) {
+    return (
+      <div key={clinicId} className="mx-auto max-w-3xl space-y-4">
+        <WhatsAppConnectPrompt clinicId={clinicId} variant="hero" />
+        <p className="text-center text-sm text-slate-500">
+          Após conectar, as mensagens dos clientes aparecerão aqui para atendimento humano e com IA.
+        </p>
+      </div>
+    )
+  }
+
   return (
-    <div key={clinicId} className="grid gap-4 lg:h-[calc(100dvh-10.5rem)] lg:grid-cols-[minmax(0,320px)_1fr_minmax(0,280px)]">
+    <div key={clinicId} className="space-y-4">
+      <WhatsAppConnectPrompt clinicId={clinicId} variant="compact" />
+      <div className="grid gap-4 lg:h-[calc(100dvh-12rem)] lg:grid-cols-[minmax(0,320px)_1fr_minmax(0,280px)]">
       <Card className="flex min-h-[280px] flex-col overflow-hidden p-0" padding="none">
         <div className="border-b border-slate-200/70 p-4 dark:border-white/10">
           <div className="flex items-center justify-between gap-2">
@@ -124,8 +140,8 @@ export default function Conversas() {
                 {useWaInbox ? 'Multiatendimento (Evolution)' : 'Histórico por cliente'}
               </div>
             </div>
-            <Link to="/app/configuracoes/whatsapp" className="text-xs font-semibold text-brand-purple hover:underline">
-              Conectar
+            <Link to="/app/whatsapp" className="text-xs font-semibold text-brand-purple hover:underline">
+              Gerenciar
             </Link>
           </div>
           <div className="mt-3">
@@ -144,7 +160,7 @@ export default function Conversas() {
             waConversations.length === 0 ? (
               <p className="px-2 py-6 text-center text-sm text-slate-500">
                 Nenhuma conversa ainda.{' '}
-                <Link to="/app/configuracoes/whatsapp" className="text-brand-purple hover:underline">
+                <Link to="/app/whatsapp" className="text-brand-purple hover:underline">
                   Conecte o WhatsApp
                 </Link>
                 .
@@ -311,6 +327,7 @@ export default function Conversas() {
           <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">Escolha uma conversa.</p>
         )}
       </Card>
+      </div>
     </div>
   )
 }

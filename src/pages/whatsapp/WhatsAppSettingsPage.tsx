@@ -74,11 +74,11 @@ export default function WhatsAppSettingsPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <Link
-          to="/app/configuracoes"
+          to="/app/conversas"
           className="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-xs font-semibold text-ink/85 hover:bg-slate-900/[0.04] dark:hover:bg-white/[0.06]"
         >
           <ArrowLeft className="h-4 w-4" />
-          Configurações
+          Voltar às conversas
         </Link>
         <div>
           <h2 className="text-lg font-extrabold tracking-tight">WhatsApp da clínica</h2>
