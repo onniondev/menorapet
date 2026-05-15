@@ -14,8 +14,22 @@ async function authHeaders(clinicId: string) {
   }
 }
 
+export type WhatsAppConfig = {
+  providerMode: string
+  webhookUrl: string | null
+  metaTokenConfigured: boolean
+  metaVerifyTokenConfigured: boolean
+  appUrl: string | null
+}
+
 export type WhatsAppInstanceStatus = {
   status: string
+  provider?: string
+  providerMode?: string
+  phoneNumberId?: string | null
+  webhookUrl?: string | null
+  metaError?: string | null
+  verifyTokenConfigured?: boolean
   evolutionReachable?: boolean
   evolutionError?: string | null
   instance: {
@@ -29,11 +43,21 @@ export type WhatsAppInstanceStatus = {
   qrCode: string | null
 }
 
-export async function apiConnectWhatsApp(clinicId: string, displayName?: string) {
+export async function apiWhatsAppConfig(clinicId: string) {
+  const res = await fetch(`${apiBase()}/api/whatsapp/config`, { headers: await authHeaders(clinicId) })
+  const json = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error((json as { error?: string }).error ?? 'Erro ao carregar config')
+  return json as WhatsAppConfig
+}
+
+export async function apiConnectWhatsApp(
+  clinicId: string,
+  opts?: { displayName?: string; phoneNumberId?: string; displayPhone?: string },
+) {
   const res = await fetch(`${apiBase()}/api/whatsapp/connect`, {
     method: 'POST',
     headers: await authHeaders(clinicId),
-    body: JSON.stringify({ displayName }),
+    body: JSON.stringify(opts ?? {}),
   })
   const json = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error((json as { error?: string }).error ?? 'Erro ao conectar WhatsApp')

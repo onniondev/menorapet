@@ -30,14 +30,25 @@ export async function getInstanceByName(instanceName: string): Promise<WhatsAppI
 }
 
 export async function getProviderForClinic(clinicId: string): Promise<{ provider: WhatsAppProvider; instance: WhatsAppInstanceRow } | null> {
-  const instance = await getInstanceByClinic(clinicId)
-  if (!instance || instance.status !== 'connected') return null
-  if (instance.provider === 'evolution') {
-    return { provider: new EvolutionWhatsAppProvider(instance.instance_name), instance }
+  const { rows } = await query<WhatsAppInstanceRow & { whatsapp_phone_number_id: string | null }>(
+    `select i.id, i.clinic_id, i.provider, i.instance_name, i.phone_number, i.status,
+            c.whatsapp_phone_number_id
+     from public.whatsapp_instances i
+     join public.clinics c on c.id = i.clinic_id
+     where i.clinic_id = $1
+     order by i.updated_at desc limit 1`,
+    [clinicId],
+  )
+  const row = rows[0]
+  if (!row || row.status !== 'connected') return null
+  if (row.provider === 'evolution') {
+    return { provider: new EvolutionWhatsAppProvider(row.instance_name), instance: row }
   }
-  if (instance.provider === 'meta_cloud') {
+  if (row.provider === 'meta_cloud') {
+    const phoneId = row.whatsapp_phone_number_id?.trim() || process.env.META_PHONE_NUMBER_ID?.trim()
+    if (!phoneId) return null
     const { MetaCloudWhatsAppProvider } = await import('./MetaCloudWhatsAppProvider')
-    return { provider: new MetaCloudWhatsAppProvider(), instance }
+    return { provider: new MetaCloudWhatsAppProvider(phoneId), instance: row }
   }
   return null
 }

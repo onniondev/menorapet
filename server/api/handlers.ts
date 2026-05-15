@@ -22,6 +22,14 @@ import {
   setConversationAi,
 } from '../whatsapp/repositories'
 import { getInstanceByName } from '../whatsapp/providers/getProviderForClinic'
+import {
+  appWebhookUrlMeta,
+  connectMetaClinicWhatsApp,
+  disconnectMetaClinicWhatsApp,
+  metaEnvReady,
+  syncMetaClinicWhatsAppStatus,
+} from '../whatsapp/metaInstanceRepository'
+import { getWhatsAppProviderMode } from '../whatsapp/providerMode'
 import { verifyMetaSignature } from '../utils/metaSignature'
 import { query } from '../db/pool'
 import type { ConversationQueue } from '../types/whatsapp'
@@ -166,12 +174,42 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
     return
   }
 
+  const providerMode = getWhatsAppProviderMode()
+
+  if (action === 'config' && req.method === 'GET') {
+    res.status(200).json({
+      providerMode,
+      webhookUrl: appWebhookUrlMeta(),
+      metaTokenConfigured: metaEnvReady(),
+      metaVerifyTokenConfigured: Boolean(process.env.META_VERIFY_TOKEN?.trim()),
+      appUrl: process.env.APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null),
+    })
+    return
+  }
+
   if (action === 'connect' && req.method === 'POST') {
-    const body = (req.body ?? {}) as { displayName?: string }
+    const body = (req.body ?? {}) as { displayName?: string; phoneNumberId?: string; displayPhone?: string }
     try {
+      if (providerMode === 'meta') {
+        const result = await connectMetaClinicWhatsApp(auth.clinicId, {
+          displayName: body.displayName,
+          phoneNumberId: body.phoneNumberId,
+          displayPhone: body.displayPhone,
+        })
+        res.status(200).json({
+          ok: true,
+          provider: 'meta_cloud',
+          status: result.status,
+          qrCode: null,
+          phoneNumberId: result.phoneNumberId,
+          instanceName: result.instance.instance_name,
+        })
+        return
+      }
       const result = await connectClinicWhatsApp(auth.clinicId, body.displayName)
       res.status(200).json({
         ok: true,
+        provider: 'evolution',
         status: result.status,
         qrCode: result.qrCode,
         instanceName: result.instance.instance_name,
@@ -184,8 +222,26 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
 
   if (action === 'status' && req.method === 'GET') {
     try {
+      if (providerMode === 'meta') {
+        const result = await syncMetaClinicWhatsAppStatus(auth.clinicId)
+        res.status(200).json({
+          provider: 'meta_cloud',
+          providerMode,
+          status: result.status,
+          instance: result.instance,
+          phoneNumber: result.instance?.phone_number ?? null,
+          phoneNumberId: result.phoneNumberId,
+          qrCode: null,
+          webhookUrl: result.webhookUrl,
+          metaError: result.metaError,
+          verifyTokenConfigured: result.verifyTokenConfigured,
+        })
+        return
+      }
       const result = await syncClinicWhatsAppStatus(auth.clinicId)
       res.status(200).json({
+        provider: 'evolution',
+        providerMode,
         status: result.status,
         instance: result.instance,
         phoneNumber: result.instance?.phone_number ?? null,
@@ -226,6 +282,12 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
   }
 
   if (action === 'qrcode' && req.method === 'GET') {
+    if (providerMode === 'meta') {
+      res.status(400).json({
+        error: 'WhatsApp oficial (Meta) não usa QR Code. Ative em Conectar com o Phone Number ID.',
+      })
+      return
+    }
     const record = await getOrCreateInstanceRecord(auth.clinicId)
     const connectRes = await connectInstance(record.instance_name)
     const qr = connectRes.ok ? extractQrFromConnect(connectRes.data) : record.qr_code
@@ -235,6 +297,11 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
   }
 
   if (action === 'logout' && req.method === 'POST') {
+    if (providerMode === 'meta') {
+      await disconnectMetaClinicWhatsApp(auth.clinicId)
+      res.status(200).json({ ok: true, status: 'disconnected' })
+      return
+    }
     const record = await getOrCreateInstanceRecord(auth.clinicId)
     await logoutInstance(record.instance_name)
     await updateInstance(record.id, { status: 'disconnected', qr_code: null, last_disconnected_at: new Date() })

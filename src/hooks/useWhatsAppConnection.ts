@@ -9,7 +9,9 @@ export function useWhatsAppConnection(clinicId: string | null | undefined) {
     retry: false,
     refetchInterval: (q) => {
       const s = q.state.data?.status
-      return s === 'qrcode' || s === 'connecting' ? 5000 : 30_000
+      const isEvolution = q.state.data?.provider === 'evolution'
+      if (isEvolution && (s === 'qrcode' || s === 'connecting')) return 5000
+      return 30_000
     },
   })
 
