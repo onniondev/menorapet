@@ -1,0 +1,10 @@
+export function json(data: unknown, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+export async function readRawBody(req: Request): Promise<string> {
+  return await req.text()
+}

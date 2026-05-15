@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Building2, Megaphone, Shield } from 'lucide-react'
+import { Building2, Megaphone, Shield, Smartphone } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -123,6 +123,25 @@ export default function Configuracoes() {
           Clínica atual
         </div>
       </div>
+
+      <Card padding="md">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+              <Smartphone className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="text-sm font-extrabold tracking-tight">WhatsApp (Evolution)</div>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Conecte o número da clínica por QR Code para inbox, tickets e IA.
+              </p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" type="button" onClick={() => void navigate('/app/configuracoes/whatsapp')}>
+            Configurar WhatsApp
+          </Button>
+        </div>
+      </Card>
 
       <ClinicSettingsForm key={`${clinic.id}-${clinic.updated_at}`} clinic={clinic} />
     </div>

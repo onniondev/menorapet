@@ -21,6 +21,7 @@ const titles: Record<string, string> = {
   '/app/automacoes': 'Automações',
   '/app/equipe': 'Equipe',
   '/app/configuracoes': 'Configurações',
+  '/app/configuracoes/whatsapp': 'WhatsApp',
   '/app/busca': 'Busca',
 }
 

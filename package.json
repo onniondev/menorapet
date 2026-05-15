@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "db:migrate": "node scripts/run-sql-file.mjs supabase/migrations/20260214120000_petvia_foundation.sql",
     "db:check": "node scripts/check-supabase-schema.mjs",
-    "db:seed-sample": "node scripts/run-sql-file.mjs supabase/seeds/petvia_dashboard_sample.sql"
+    "db:seed-sample": "node scripts/run-sql-file.mjs supabase/seeds/petvia_dashboard_sample.sql",
+    "db:migrate-whatsapp": "node scripts/run-sql-file.mjs supabase/migrations/20260315120000_whatsapp_meta.sql",
+    "dev:api": "vercel dev"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -46,6 +48,7 @@
     "pg": "^8.20.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "@vercel/node": "^5.3.0"
   }
 }

@@ -69,6 +69,17 @@ values ('<UUID_DO_AUTH_USERS>', 'admin');
 
 Fluxo obrigatório: **draft → approved → scheduled | published**. Rascunhos não podem ser publicados (validado na Edge Function `publish-instagram-post`).
 
+## WhatsApp Business (Meta Cloud API)
+
+Migração: `supabase/migrations/20260315120000_whatsapp_meta.sql`.
+
+- Webhook: `/api/webhooks/whatsapp` (GET verificação + POST eventos)
+- APIs internas: `/api/conversations/*` (listar, assumir, transferir, encerrar, enviar)
+- Lógica: pasta `server/` (envio Graph API, classificação de intenção, FAQ, IA)
+- Documentação: [docs/whatsapp-meta-setup.md](docs/whatsapp-meta-setup.md)
+
+Deploy na **Vercel** com variáveis `META_*`, `DATABASE_URL`, `OPENAI_API_KEY`. Local: `npm run dev:api` (requer Vercel CLI).
+
 ## Scripts
 
 | Comando        | Descrição                          |
@@ -78,6 +89,8 @@ Fluxo obrigatório: **draft → approved → scheduled | published**. Rascunhos 
 | `npm run lint` | ESLint                             |
 | `npm run db:migrate` | Aplica a migração SQL (`DATABASE_URL`) |
 | `npm run db:check`   | Confere tabelas via API REST   |
+| `npm run db:migrate-whatsapp` | Aplica migração WhatsApp Meta |
+| `npm run dev:api`    | Dev com APIs (`vercel dev`)    |
 
 ## Fluxo no app
 

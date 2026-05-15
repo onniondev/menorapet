@@ -17,6 +17,7 @@ import CentralIA from './pages/CentralIA'
 import ClientesPage from './pages/ClientesPage'
 import Configuracoes from './pages/Configuracoes'
 import Conversas from './pages/Conversas'
+import WhatsAppSettingsPage from './pages/whatsapp/WhatsAppSettingsPage'
 import Dashboard from './pages/Dashboard'
 import EquipePage from './pages/EquipePage'
 import Financeiro from './pages/Financeiro'
@@ -72,6 +73,7 @@ export default function App() {
                 <Route path="financeiro" element={<Financeiro />} />
                 <Route path="equipe" element={<EquipePage />} />
                 <Route path="configuracoes" element={<Configuracoes />} />
+                <Route path="configuracoes/whatsapp" element={<WhatsAppSettingsPage />} />
               </Route>
             </Route>
           </Route>
