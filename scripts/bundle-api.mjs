@@ -6,7 +6,9 @@ const outDir = 'api/_bundle'
 fs.mkdirSync(outDir, { recursive: true })
 
 const outfile = path.join(outDir, 'handlers.cjs')
-const args = [
+const esbuildArgs = [
+  '--yes',
+  'esbuild@0.27.0',
   'server/api/handlers.ts',
   '--bundle',
   '--platform=node',
@@ -17,11 +19,16 @@ const args = [
   '--sourcemap',
 ]
 
-const run = spawnSync('npx', ['--yes', 'esbuild@0.27.0', ...args], {
+const isWin = process.platform === 'win32'
+const run = spawnSync(isWin ? 'npx.cmd' : 'npx', esbuildArgs, {
   stdio: 'inherit',
-  shell: true,
+  shell: isWin,
 })
 
+if (run.error) {
+  console.error(run.error)
+  process.exit(1)
+}
 if (run.status !== 0) {
   process.exit(run.status ?? 1)
 }
