@@ -12,6 +12,8 @@
     "db:check": "node scripts/check-supabase-schema.mjs",
     "db:seed-sample": "node scripts/run-sql-file.mjs supabase/seeds/petvia_dashboard_sample.sql",
     "db:migrate-whatsapp": "node scripts/run-sql-file.mjs supabase/migrations/20260315120000_whatsapp_meta.sql",
+    "db:migrate-whatsapp-evolution": "node scripts/run-sql-file.mjs supabase/migrations/20260320120000_whatsapp_evolution.sql",
+    "db:migrate-whatsapp-all": "node scripts/apply-whatsapp-migrations.mjs",
     "dev:api": "vercel dev"
   },
   "dependencies": {
