@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { handleEvolutionWebhook, handleMetaWebhook } from '../../server/api/handlers'
+import { handleEvolutionWebhook, handleMetaWebhook } from '../_bundle/handlers.cjs'
 
 export const config = {
   api: { bodyParser: false },

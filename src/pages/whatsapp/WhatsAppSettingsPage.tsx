@@ -134,8 +134,12 @@ export default function WhatsAppSettingsPage() {
         </div>
 
         {statusQ.isError ? (
-          <p className="text-sm text-red-600">
-            {(statusQ.error as Error).message}. Verifique DATABASE_URL e Evolution API no servidor.
+          <p className="text-sm text-red-600">{(statusQ.error as Error).message}</p>
+        ) : null}
+        {statusQ.data?.evolutionError && !statusQ.isError ? (
+          <p className="text-sm text-amber-700 dark:text-amber-300">
+            Evolution API inacessível da Vercel ({statusQ.data.evolutionError}). Use URL pública da Evolution, não
+            localhost — ou teste com <code className="text-xs">vercel dev</code> no PC.
           </p>
         ) : null}
       </Card>

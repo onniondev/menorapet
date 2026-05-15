@@ -99,19 +99,40 @@ export async function syncClinicWhatsAppStatus(clinicId: string) {
     [clinicId],
   )
   const record = rows[0]
-  if (!record) return { status: 'disconnected' as const, instance: null }
+  if (!record) {
+    return {
+      status: 'disconnected' as const,
+      instance: null,
+      evolutionReachable: false,
+      evolutionError: null,
+    }
+  }
 
-  const stateRes = await evolution.getConnectionState(record.instance_name)
-  const remote = stateRes.ok
-    ? mapEvolutionState(
-        (stateRes.data as { instance?: { state?: string } })?.instance?.state ?? (stateRes.data as { state?: string })?.state,
+  let evolutionReachable = false
+  let evolutionError: string | null = null
+  let remote = record.status
+
+  try {
+    const stateRes = await evolution.getConnectionState(record.instance_name)
+    evolutionReachable = stateRes.ok
+    if (!stateRes.ok) {
+      evolutionError = stateRes.error
+    } else {
+      remote = mapEvolutionState(
+        (stateRes.data as { instance?: { state?: string } })?.instance?.state ??
+          (stateRes.data as { state?: string })?.state,
       )
-    : record.status
+    }
+  } catch (e) {
+    evolutionError = (e as Error).message
+  }
 
-  if (remote === 'connected' && record.status !== 'connected') {
-    await updateInstance(record.id, { status: 'connected', last_connected_at: new Date(), qr_code: null })
-  } else if (remote === 'disconnected') {
-    await updateInstance(record.id, { status: 'disconnected', last_disconnected_at: new Date() })
+  if (evolutionReachable) {
+    if (remote === 'connected' && record.status !== 'connected') {
+      await updateInstance(record.id, { status: 'connected', last_connected_at: new Date(), qr_code: null })
+    } else if (remote === 'disconnected') {
+      await updateInstance(record.id, { status: 'disconnected', last_disconnected_at: new Date() })
+    }
   }
 
   const { rows: updated } = await query<InstanceRow>(
@@ -119,5 +140,10 @@ export async function syncClinicWhatsAppStatus(clinicId: string) {
      from public.whatsapp_instances where id = $1`,
     [record.id],
   )
-  return { status: updated[0]?.status ?? remote, instance: updated[0] ?? record }
+  return {
+    status: updated[0]?.status ?? record.status,
+    instance: updated[0] ?? record,
+    evolutionReachable,
+    evolutionError,
+  }
 }

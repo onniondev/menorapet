@@ -158,7 +158,7 @@ export async function handleAppApi(req: VercelRequest, res: VercelResponse, segm
   res.status(404).json({ error: 'Not found' })
 }
 
-async function handleWhatsAppRoutes(req: VercelRequest, res: VercelResponse, rest: string[]) {
+export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelResponse, rest: string[]) {
   const action = rest[0]
   const auth = await getApiAuth(req)
   if ('error' in auth) {
@@ -183,13 +183,33 @@ async function handleWhatsAppRoutes(req: VercelRequest, res: VercelResponse, res
   }
 
   if (action === 'status' && req.method === 'GET') {
-    const result = await syncClinicWhatsAppStatus(auth.clinicId)
-    res.status(200).json({
-      status: result.status,
-      instance: result.instance,
-      phoneNumber: result.instance?.phone_number ?? null,
-      qrCode: result.instance?.qr_code ?? null,
-    })
+    try {
+      const result = await syncClinicWhatsAppStatus(auth.clinicId)
+      res.status(200).json({
+        status: result.status,
+        instance: result.instance,
+        phoneNumber: result.instance?.phone_number ?? null,
+        qrCode: result.instance?.qr_code ?? null,
+        evolutionReachable: result.evolutionReachable,
+        evolutionError: result.evolutionError ?? null,
+      })
+    } catch (e) {
+      const msg = (e as Error).message
+      console.error('whatsapp status', msg)
+      if (/relation .* does not exist/i.test(msg)) {
+        res.status(503).json({
+          error: 'Tabela whatsapp_instances não existe. Rode as migrações SQL no Supabase (whatsapp_meta e whatsapp_evolution).',
+        })
+        return
+      }
+      if (/DATABASE_URL/i.test(msg) || /password authentication/i.test(msg) || /ENOTFOUND|ECONNREFUSED/i.test(msg)) {
+        res.status(503).json({
+          error: 'Falha ao conectar no Postgres. Confira DATABASE_URL na Vercel (use a URI do Supabase com senha URL-encoded e ?sslmode=require).',
+        })
+        return
+      }
+      res.status(500).json({ error: msg })
+    }
     return
   }
 
@@ -221,7 +241,7 @@ async function handleWhatsAppRoutes(req: VercelRequest, res: VercelResponse, res
   res.status(404).json({ error: 'Not found' })
 }
 
-async function handleConversationRoutes(req: VercelRequest, res: VercelResponse, rest: string[]) {
+export async function handleConversationRoutes(req: VercelRequest, res: VercelResponse, rest: string[]) {
   if (rest.length === 0 && req.method === 'GET') {
     const auth = await getApiAuth(req)
     if ('error' in auth) {

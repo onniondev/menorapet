@@ -30,3 +30,4 @@ supabase/.temp/
 .keys/
 
 .vercel
+api/_bundle/

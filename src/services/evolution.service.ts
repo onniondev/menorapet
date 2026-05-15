@@ -16,6 +16,8 @@ async function authHeaders(clinicId: string) {
 
 export type WhatsAppInstanceStatus = {
   status: string
+  evolutionReachable?: boolean
+  evolutionError?: string | null
   instance: {
     id: string
     instance_name: string
