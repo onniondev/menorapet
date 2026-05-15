@@ -4,11 +4,29 @@ const { Pool } = pg
 
 let pool: pg.Pool | null = null
 
+const DIRECT_DB_HOST_HINT =
+  'A conexão direta db.PROJECT_REF.supabase.co é só IPv6 e falha na Vercel. No Supabase: Settings → Database → Connection string → Session pooler (host aws-0-REGIAO.pooler.supabase.com, usuário postgres.PROJECT_REF).'
+
+function assertReachableFromServerless(url: string) {
+  try {
+    const parsed = new URL(url.replace(/^postgresql:\/\//, 'postgres://'))
+    if (/^db\.[a-z0-9]+\.supabase\.co$/i.test(parsed.hostname)) {
+      throw new Error(DIRECT_DB_HOST_HINT)
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message === DIRECT_DB_HOST_HINT) throw e
+  }
+}
+
 function normalizeDatabaseUrl(raw: string) {
   const url = raw.trim()
-  if (url.includes('sslmode=')) return url
-  const sep = url.includes('?') ? '&' : '?'
-  return `${url}${sep}sslmode=require`
+  assertReachableFromServerless(url)
+  const parsed = new URL(url.replace(/^postgresql:\/\//, 'postgres://'))
+  const params = new URLSearchParams(parsed.search)
+  if (!params.has('sslmode')) params.set('sslmode', 'require')
+  if (parsed.port === '6543' && !params.has('pgbouncer')) params.set('pgbouncer', 'true')
+  parsed.search = params.toString() ? `?${params.toString()}` : ''
+  return parsed.toString().replace(/^postgres:\/\//, 'postgresql://')
 }
 
 export function getPool(): pg.Pool {

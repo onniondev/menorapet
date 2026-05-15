@@ -202,9 +202,14 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
         })
         return
       }
+      if (/pooler|IPv6|db\.[a-z0-9]+\.supabase\.co/i.test(msg)) {
+        res.status(503).json({ error: msg })
+        return
+      }
       if (/DATABASE_URL/i.test(msg) || /password authentication/i.test(msg) || /ENOTFOUND|ECONNREFUSED/i.test(msg)) {
         res.status(503).json({
-          error: 'Falha ao conectar no Postgres. Confira DATABASE_URL na Vercel (use a URI do Supabase com senha URL-encoded e ?sslmode=require).',
+          error:
+            'Falha ao conectar no Postgres. Na Vercel, use o Session pooler do Supabase (host aws-0-REGIAO.pooler.supabase.com, usuário postgres.PROJECT_REF), senha URL-encoded e ?sslmode=require — não use db.PROJECT_REF.supabase.co.',
         })
         return
       }
