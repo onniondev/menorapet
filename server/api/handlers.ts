@@ -177,12 +177,19 @@ export async function handleWhatsAppRoutes(req: VercelRequest, res: VercelRespon
   const providerMode = getWhatsAppProviderMode()
 
   if (action === 'config' && req.method === 'GET') {
+    const appUrl = process.env.APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
     res.status(200).json({
       providerMode,
-      webhookUrl: appWebhookUrlMeta(),
+      webhookUrl:
+        providerMode === 'meta'
+          ? appWebhookUrlMeta()
+          : appUrl
+            ? `${appUrl.replace(/\/$/, '')}/api/webhooks/evolution`
+            : null,
       metaTokenConfigured: metaEnvReady(),
       metaVerifyTokenConfigured: Boolean(process.env.META_VERIFY_TOKEN?.trim()),
-      appUrl: process.env.APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null),
+      evolutionConfigured: providerMode === 'evolution',
+      appUrl,
     })
     return
   }

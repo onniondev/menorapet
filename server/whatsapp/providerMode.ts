@@ -1,10 +1,13 @@
 import { getEvolutionConfigError } from '../evolution/evolutionClient'
 
-/** Padrão: Meta Cloud (sem servidor Evolution). Use WHATSAPP_PROVIDER=evolution para QR Code. */
+/** Padrão: Evolution (QR Code, número da clínica). Use WHATSAPP_PROVIDER=meta só se quiser API oficial Meta. */
 export function getWhatsAppProviderMode(): 'meta' | 'evolution' {
-  const forced = (process.env.WHATSAPP_PROVIDER ?? 'meta').toLowerCase()
-  if (forced === 'evolution') return 'evolution'
+  const forced = (process.env.WHATSAPP_PROVIDER ?? 'evolution').toLowerCase()
   if (forced === 'meta' || forced === 'meta_cloud') return 'meta'
-  if (getEvolutionConfigError()) return 'meta'
-  return 'meta'
+  if (forced === 'evolution') return 'evolution'
+  return 'evolution'
+}
+
+export function evolutionConfigured(): boolean {
+  return !getEvolutionConfigError()
 }

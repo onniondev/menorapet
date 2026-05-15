@@ -63,7 +63,7 @@ export function WhatsAppConnectPrompt({ clinicId, variant = 'banner', className 
               <p className="mt-1 max-w-lg text-sm text-slate-600 dark:text-slate-400">
                 {isConnected
                   ? 'Sua equipe pode atender clientes no inbox com IA PetVia, filas e transferência entre setores.'
-                  : 'Ative o WhatsApp Business oficial (Meta) na Vercel — sem QR Code nem servidor pago extra.'}
+                  : 'Conecte o WhatsApp da clínica por QR Code — o número que a equipe já usa no dia a dia.'}
               </p>
               {!isConnected && needsQr && qrCode ? (
                 <div className="mt-4 flex flex-col items-start gap-2 sm:flex-row sm:items-center">
@@ -77,7 +77,7 @@ export function WhatsAppConnectPrompt({ clinicId, variant = 'banner', className 
             {!isConnected ? (
               <Link to={connectPath}>
                 <Button type="button" leftIcon={<QrCode className="h-4 w-4" />}>
-                  Configurar WhatsApp
+                  Conectar por QR Code
                 </Button>
               </Link>
             ) : (
@@ -120,7 +120,7 @@ export function WhatsAppConnectPrompt({ clinicId, variant = 'banner', className 
                 ? phone
                   ? `Número ${phone} · inbox e IA ativos`
                   : 'Inbox e IA PetVia disponíveis'
-                : `Status: ${STATUS_LABEL[status] ?? status} · ative a API oficial Meta (sem Evolution)`}
+                : `Status: ${STATUS_LABEL[status] ?? status} · escaneie o QR com o celular da clínica`}
             </p>
           </div>
         </div>
